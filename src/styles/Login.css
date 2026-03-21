@@ -1,0 +1,109 @@
+/* Login.css mejorado */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Fondo con un degradado sutil y moderno */
+  background: radial-gradient(circle at top left, #e8f5e9 0%, #ffffff 50%, #fff3e0 100%);
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px); /* Efecto de desenfoque de fondo */
+  padding: 50px 40px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 360px;
+  /* Sombra suave y multicapa para dar profundidad */
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #1b5e20;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  color: #666;
+  font-size: 15px;
+  margin-bottom: 30px;
+  font-weight: 400;
+}
+
+.login-input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  border: 1.5px solid #eee;
+  font-size: 15px;
+  background-color: #fcfcfc;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #66bb6a;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(102, 187, 106, 0.15);
+  transform: translateY(-1px);
+}
+
+.login-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  /* Color verde sólido por defecto */
+  background-color: #43a047;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* Sombra suave con tono verde */
+  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.2);
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  /* Color naranja sólido al pasar el mouse */
+  background-color: #fb8c00;
+  /* Sombra más intensa con tono naranja */
+  box-shadow: 0 8px 20px rgba(251, 140, 0, 0.3);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-error {
+  background-color: #ffebee;
+  color: #c62828;
+  font-size: 13px;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ffcdd2;
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Animación de error para que sea más visual */
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
