@@ -1,13 +1,23 @@
+/* RESET TOTAL PARA ELIMINAR BARRAS NEGRAS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Login.css mejorado */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100vw; /* Forzamos el ancho total */
   height: 100vh;
-  /* Fondo con un degradado sutil y moderno */
   background: radial-gradient(circle at top left, #e8f5e9 0%, #ffffff 50%, #fff3e0 100%);
-  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0;
+  position: absolute; /* Alineamos al borde real del navegador */
+  left: 0;
+  top: 0;
 }
 
 .login-box {

@@ -1,59 +1,42 @@
-body {
+/* RESET TOTAL PARA ELIMINAR BARRAS NEGRAS */
+* {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f5f5f5;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Contenedor */
+html, body, #root {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* Esto elimina el límite que traen algunos proyectos de React por defecto */
+  max-width: none !important; 
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  background-color: #f8fafc;
+  display: block; /* Asegura que no se comporte como un flex centrado global */
+}
+
+/* --- ESTILOS DE LOGIN (Aislados) --- */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at top left, #e8f5e9 0%, #ffffff 50%, #fff3e0 100%);
 }
 
-/* Caja */
 .login-box {
   background: white;
   padding: 40px;
-  border-radius: 12px;
-  width: 320px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 24px;
+  width: 360px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   text-align: center;
-}
-
-/* Título */
-.login-box h2 {
-  color: #2e7d32; /* verde */
-  margin-bottom: 20px;
-}
-
-/* Inputs */
-.login-box input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-}
-
-.login-box input:focus {
-  border-color: #2e7d32;
-}
-
-/* Botón */
-.login-box button {
-  width: 100%;
-  padding: 10px;
-  background-color: #ff9800; /* naranja */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.login-box button:hover {
-  background-color: #e68900;
 }

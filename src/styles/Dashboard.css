@@ -1,150 +1,287 @@
-RESET PARA EVITAR ERRORES
+/* ==========================================================================
+   SISTEMA DE GESTIÓN ADMINISTRATIVA - DASHBOARD.CSS
+   ========================================================================== */
+
+/* 1. RESET Y FUENTES */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
-body {
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: radial-gradient(circle at top left, #e0f2f1 0%, #fffde7 100%);
-  min-height: 100vh;
-  color: #1e293b;
-}
-
-.dashboard-container {
-  width: 100%;
-  min-height: 100vh;
+/* 2. LAYOUT PRINCIPAL */
+.dashboard-layout {
   display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-/* HEADER */
-.dashboard-header {
-  width: 100%;
-  padding: 20px 40px;
-  display: flex;
-  justify-content: flex-end;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f8fafc;
   position: absolute;
+  left: 0;
   top: 0;
 }
 
-.logout-btn {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(251, 140, 0, 0.3);
-  color: #fb8c00;
-  padding: 10px 25px;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
+/* 3. SIDEBAR */
+.sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
 }
 
-/* TITULO PRINCIPAL */
-.profile-title {
-    text-align: center;
-    font-size: 56px; /* Ajustado un poco para mejor balance */
-    font-weight: 800;
-    margin-top: 100px;
-    margin-bottom: 20px;
-    
-    /* ELIMINAMOS EL DEGRADADO Y EL CLIP */
-    color: #1b4332; 
-    background: none;
-    -webkit-background-clip: initial;
-    -webkit-text-fill-color: initial;
-    
-    /* ESTO ASEGURA QUE LA LETRA NO SE CORTE */
-    display: block;
-    line-height: 1.2;
-    letter-spacing: -1px;
+.sidebar-header {
+  margin-bottom: 40px;
+  padding-left: 10px;
 }
 
-/* CONTENIDO */
-.dashboard-content {
+.sidebar-header h2 {
+  color: #1e293b;
+  font-size: 1.3rem; 
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sidebar-header span {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* 4. NAVEGACIÓN */
+.sidebar-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 50px;
+  gap: 6px;
 }
 
-/* TARJETA GLASSMORPISM */
-.profile-card-glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  padding: 40px;
-  border-radius: 30px;
-  width: 400px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.avatar-circle {
-  width: 90px;
-  height: 90px;
-  background: linear-gradient(135deg, #66bb6a, #43a047);
-  color: white;
-  border-radius: 50%;
+.nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  font-weight: bold;
-  margin: 0 auto 20px;
-  box-shadow: 0 10px 20px rgba(67, 160, 71, 0.2);
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #64748b;
+  font-weight: 500; 
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.user-name {
-  font-size: 28px;
+.nav-item:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.nav-item.active {
+  background-color: #eff6ff;
+  color: #4f46e5;
+}
+
+/* 5. FOOTER SIDEBAR */
+.sidebar-footer {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+.sidebar-logout {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+/* 6. CONTENIDO PRINCIPAL */
+.main-content {
+  flex: 1;
+  padding: 30px 50px; 
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; 
+}
+
+.content-header {
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.content-header h1 {
+  font-size: 1.8rem; 
   font-weight: 700;
   color: #1e293b;
-  margin-bottom: 5px;
 }
 
-.user-email {
-  font-size: 16px;
-  color: #64748b;
+/* 7. TARJETAS DE ESTADÍSTICAS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 35px;
+}
+
+.stat-card {
+  background: white;
+  padding: 24px;
+  border-radius: 20px; 
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  text-align: center;
+}
+
+.stat-data .label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+}
+
+.stat-data .value {
+  font-size: 2.2rem; 
+  font-weight: 700;
+  margin-top: 8px;
+  display: block;
+}
+
+.stats-grid .stat-card:nth-child(1) .value { color: #6366f1; }
+.stats-grid .stat-card:nth-child(2) .value { color: #a855f7; }
+.stats-grid .stat-card:nth-child(3) .value { color: #22c55e; }
+
+/* 8. SECCIÓN DE GRÁFICAS (NUEVO) */
+.charts-section-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 35px;
+}
+
+.chart-card-full {
+  background: white;
+  padding: 25px;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
   margin-bottom: 20px;
 }
 
-.edit-link-green {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* BOTONES DE ABAJO */
-.actions-container {
+.bar-chart-container {
   display: flex;
-  gap: 15px;
+  align-items: flex-end;
+  gap: 12px;
+  height: 150px;
+  margin-top: auto;
+  padding-bottom: 10px;
 }
 
-.primary-btn, .secondary-btn {
-  padding: 15px 35px;
-  border-radius: 15px;
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  color: white;
-  transition: 0.3s;
+.bar-column {
+  flex: 1;
+  background: #6366f1;
+  border-radius: 8px;
+  min-width: 25px;
+  transition: height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.primary-btn { background: #2e7d32; }
-.secondary-btn { background: #fb8c00; }
-
-.primary-btn:hover, .secondary-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+.pie-chart-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#6366f1 70%, #eef2ff 0);
+  margin: auto;
 }
+
+/* 9. ESTADOS VACÍOS / CARGA */
+.empty-state-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  border: 2px dashed #f1f5f9;
+  border-radius: 16px;
+  font-style: italic;
+}
+
+/* 10. TABLA DE FACTURAS */
+.recent-invoices-container {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.recent-invoices-container h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 25px;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-table th {
+  text-align: left;
+  padding: 12px 15px;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.invoice-table td {
+  padding: 18px 15px;
+  font-size: 0.9rem;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.empty-table-msg {
+  text-align: center;
+  padding: 40px !important;
+  color: #94a3b8;
+}
+
+/* 11. UTILIDADES */
+.font-bold {
+  font-weight: 700;
+}
+
+.invoice-amount {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* PILLS DE ESTADO */
+.status-pill {
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-pill.pagada { background-color: #ecfdf5; color: #10b981; }
+.status-pill.pendiente { background-color: #fffbeb; color: #f59e0b; }
+.status-pill.vencida { background-color: #fef2f2; color: #ef4444; }

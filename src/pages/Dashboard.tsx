@@ -1,49 +1,136 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Dashboard.css";
-import UserCard from "../components/UserCard";
-import EditProfileModal from "../components/EditProfileModal.tsx";
-
-interface User {
-  name: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
 
 const Dashboard: React.FC = () => {
-  const [user, setUser] = useState<User>({
-    name: "Karen",
-    lastName: "Perdomo",
-    email: "karen@email.com",
-    phone: "3001234567",
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // --- ESTADOS PARA EL BACKEND ---
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    ingresos: "0",
+    pendientes: "0",
+    estudiantes: 0
   });
 
-  const [showModal, setShowModal] = useState(false);
+  // BACKEND_CONNECT: Inicializado vacío [] para que no dibuje nada al inicio
+  const [chartData, setChartData] = useState<number[]>([]);
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <button className="logout-btn">Cerrar sesión</button>
-      </header>
-
-      <main className="dashboard-content">
-        <h1 className="profile-title">Mi Perfil</h1>
-
-        <UserCard user={user} onEdit={() => setShowModal(true)} />
-
-        <div className="actions-container">
-          <button className="primary-btn">Ver Portafolio</button>
-          <button className="secondary-btn">Nueva Orden</button>
+    <div className="dashboard-layout">
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <h2>Sistema Educativo</h2>
+          <span>Gestión Administrativa</span>
         </div>
-      </main>
+        <nav className="sidebar-nav">
+          <div className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} onClick={() => navigate("/dashboard")}>📊 Dashboard</div>
+          <div className="nav-item">🎓 Estudiantes</div>
+          <div className="nav-item">📄 Facturación</div>
+          <div className="nav-item">💳 Pagos</div>
+          <div className="nav-item">📈 Reportes</div>
+          <div className={`nav-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={() => navigate("/usuarios")}>👥 Usuarios</div>
+        </nav>
+        <div className="sidebar-footer">
+          <button className="sidebar-logout" onClick={() => navigate("/home")}>🚪 Cerrar Sesión</button>
+        </div>
+      </aside>
 
-      {showModal && (
-        <EditProfileModal
-          user={user}
-          setUser={setUser}
-          onClose={() => setShowModal(false)}
-        />
-      )}
+      <main className="main-content">
+        <header className="content-header">
+          <h1>Dashboard</h1>
+          <p>Bienvenido al sistema de gestión administrativa</p>
+        </header>
+
+        {/* TARJETAS DE ESTADÍSTICAS */}
+        <section className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-data">
+              <span className="label">Ingresos del Mes</span>
+              <h2 className="value">${stats.ingresos}</h2>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-data">
+              <span className="label">Pagos Pendientes</span>
+              <h2 className="value">${stats.pendientes}</h2>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-data">
+              <span className="label">Estudiantes Activos</span>
+              <h2 className="value">{stats.estudiantes}</h2>
+            </div>
+          </div>
+        </section>
+
+        {/* SECCIÓN DE GRÁFICAS (SIN ESTILOS INLINE) */}
+        <section className="charts-section-container">
+          <div className="chart-card-full">
+            <h3 className="chart-title">Ingresos Mensuales</h3>
+            {chartData.length > 0 ? (
+              <div className="bar-chart-container">
+                {chartData.map((h, i) => (
+                  <div key={i} className="bar-column" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state-container">Esperando datos de ingresos...</div>
+            )}
+          </div>
+
+          <div className="chart-card-full">
+            <h3 className="chart-title">Pagos por Método</h3>
+            {stats.ingresos !== "0" ? (
+              <div className="pie-chart-circle"></div>
+            ) : (
+              <div className="empty-state-container">Sin registros de pago</div>
+            )}
+          </div>
+        </section>
+
+        {/* TABLA DE FACTURAS */}
+        <section className="recent-invoices-container">
+          <h2>Facturas Recientes</h2>
+          <table className="invoice-table">
+            <thead>
+              <tr>
+                <th>NÚMERO</th>
+                <th>ESTUDIANTE</th>
+                <th>CONCEPTO</th>
+                <th>MONTO</th>
+                <th>ESTADO</th>
+                <th>VENCIMIENTO</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.length > 0 ? (
+                invoices.map((inv, index) => (
+                  <tr key={index}>
+                    <td className="font-bold">{inv.id}</td>
+                    <td>{inv.student}</td>
+                    <td>{inv.concept}</td>
+                    <td className="invoice-amount">{inv.amount}</td>
+                    <td>
+                      <span className={`status-pill ${inv.status.toLowerCase()}`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td>{inv.date}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="empty-table-msg">
+                    No hay facturas disponibles.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </section>
+      </main>
     </div>
   );
 };
