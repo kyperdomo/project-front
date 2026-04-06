@@ -1,4 +1,4 @@
-/* RESET TOTAL PARA ELIMINAR BARRAS NEGRAS */
+/* RESET PARA EVITAR MÁRGENES EXTRAÑOS */
 * {
   margin: 0;
   padding: 0;
@@ -6,15 +6,16 @@
 }
 
 .home-container {
-  width: 100vw; /* Ocupa todo el ancho de la ventana */
+  width: 100vw; 
   min-height: 100vh;
   background: #ffffff;
   font-family: "Plus Jakarta Sans", sans-serif;
   margin: 0;
   padding: 0;
-  position: absolute; /* Esto rompe cualquier centrado externo */
+  position: absolute; 
   left: 0;
   top: 0;
+  overflow-x: hidden;
 }
 
 /* NAVBAR */
@@ -33,7 +34,29 @@
 }
 
 .logo span {
-  color: #fb8c00; /* Punto naranja para dar estilo */
+  color: #fb8c00; /* Naranja del logo */
+}
+
+/* CONTENEDOR DE BOTONES DE ACCESO */
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.auxiliar-btn {
+  background: transparent;
+  border: none;
+  color: #64748b; /* Gris elegante */
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auxiliar-btn:hover {
+  color: #fb8c00; /* Resalta con el naranja del logo al pasar el mouse */
 }
 
 .login-btn {
@@ -44,20 +67,22 @@
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
 .login-btn:hover {
   background: #f0f4f2;
+  transform: translateY(-1px);
 }
 
-/* HERO */
+/* HERO SECTION */
 .hero {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-top: 120px;
+  margin-top: 100px;
   padding: 0 20px;
 }
 
@@ -96,29 +121,11 @@
   gap: 15px;
 }
 
-.cta-btn {
-  background: #1b4332; /* Verde sólido para autoridad */
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 10px 20px rgba(27, 67, 50, 0.15);
-}
-
-.cta-btn:hover {
-  transform: translateY(-3px);
-  background: #2d5a48;
-}
-
 .secondary-cta {
   background: #f8fafc;
   color: #64748b;
   border: 1px solid #e2e8f0;
-  padding: 16px 32px;
+  padding: 16px 40px;
   border-radius: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -127,6 +134,7 @@
 
 .secondary-cta:hover {
   background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 /* DECORATIVO FEATURES */

@@ -123,10 +123,22 @@
 import { useState } from "react";
 import AppRoutes from "./routes/AppRoutes";
 
+// Definimos los tipos de roles posibles para mayor seguridad
+export type UserRole = "admin" | "auxiliar";
+
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  // Agregamos el estado para el rol del usuario
+  const [userRole, setUserRole] = useState<UserRole>("admin");
 
-  return <AppRoutes isAuth={isAuth} setIsAuth={setIsAuth} />;
+  return (
+    <AppRoutes 
+      isAuth={isAuth} 
+      setIsAuth={setIsAuth} 
+      userRole={userRole} 
+      setUserRole={setUserRole} 
+    />
+  );
 }
 
 export default App;

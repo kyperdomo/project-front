@@ -1,33 +1,38 @@
-/* RESET TOTAL PARA ELIMINAR BARRAS NEGRAS */
+/* RESET TOTAL PARA ELIMINAR BARRAS NEGRAS Y MÁRGENES */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Login.css mejorado */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw; /* Forzamos el ancho total */
+  width: 100vw;
   height: 100vh;
+  /* Degradado suave por defecto (Verde/Blanco) */
   background: radial-gradient(circle at top left, #e8f5e9 0%, #ffffff 50%, #fff3e0 100%);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   margin: 0;
-  position: absolute; /* Alineamos al borde real del navegador */
+  position: absolute;
   left: 0;
   top: 0;
+  transition: background 0.5s ease;
+}
+
+/* VARIANTE PARA TEMA AUXILIAR (Naranja) */
+.login-container.theme-auxiliar {
+  background: radial-gradient(circle at top left, #fff3e0 0%, #ffffff 50%, #e8f5e9 100%);
 }
 
 .login-box {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px); /* Efecto de desenfoque de fondo */
+  backdrop-filter: blur(10px);
   padding: 50px 40px;
   border-radius: 24px;
   width: 100%;
-  max-width: 360px;
-  /* Sombra suave y multicapa para dar profundidad */
+  max-width: 380px;
   box-shadow: 
     0 4px 6px -1px rgba(0, 0, 0, 0.05), 
     0 20px 25px -5px rgba(0, 0, 0, 0.1);
@@ -39,15 +44,13 @@
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 8px;
-  color: #1b5e20;
+  color: #1b4332; /* Verde original */
   letter-spacing: -0.5px;
 }
 
-.login-subtitle {
-  color: #666;
-  font-size: 15px;
-  margin-bottom: 30px;
-  font-weight: 400;
+/* Título naranja si es auxiliar */
+.theme-auxiliar .login-title {
+  color: #e65100;
 }
 
 .login-input {
@@ -55,27 +58,31 @@
   padding: 14px 16px;
   margin-bottom: 18px;
   border-radius: 12px;
-  border: 1.5px solid #eee;
+  border: 1.5px solid #e2e8f0;
   font-size: 15px;
   background-color: #fcfcfc;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+  transition: all 0.3s ease;
 }
 
 .login-input:focus {
   outline: none;
-  border-color: #66bb6a;
+  border-color: #1b4332;
   background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(102, 187, 106, 0.15);
+  box-shadow: 0 0 0 4px rgba(27, 67, 50, 0.1);
   transform: translateY(-1px);
+}
+
+/* Input focus naranja para auxiliar */
+.theme-auxiliar .login-input:focus {
+  border-color: #fb8c00;
+  box-shadow: 0 0 0 4px rgba(251, 140, 0, 0.1);
 }
 
 .login-button {
   width: 100%;
   padding: 14px;
   margin-top: 10px;
-  /* Color verde sólido por defecto */
-  background-color: #43a047;
+  background-color: #1b4332; /* Verde sólido */
   color: white;
   border: none;
   border-radius: 12px;
@@ -83,20 +90,24 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  /* Sombra suave con tono verde */
-  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.2);
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.2);
 }
 
 .login-button:hover {
   transform: translateY(-2px);
-  /* Color naranja sólido al pasar el mouse */
-  background-color: #fb8c00;
-  /* Sombra más intensa con tono naranja */
-  box-shadow: 0 8px 20px rgba(251, 140, 0, 0.3);
+  background-color: #2d5a48;
+  box-shadow: 0 8px 20px rgba(27, 67, 50, 0.25);
 }
 
-.login-button:active {
-  transform: translateY(0);
+/* Botón naranja para el auxiliar */
+.login-button.btn-auxiliar {
+  background-color: #fb8c00;
+  box-shadow: 0 4px 12px rgba(251, 140, 0, 0.2);
+}
+
+.login-button.btn-auxiliar:hover {
+  background-color: #ef6c00;
+  box-shadow: 0 8px 20px rgba(239, 108, 0, 0.3);
 }
 
 .login-error {
@@ -107,10 +118,27 @@
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #ffcdd2;
-  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.4s both;
 }
 
-/* Animación de error para que sea más visual */
+.back-link {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  margin-top: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-link:hover {
+  color: #1b4332;
+  text-decoration: underline;
+}
+
+/* Animación de error */
 @keyframes shake {
   10%, 90% { transform: translate3d(-1px, 0, 0); }
   20%, 80% { transform: translate3d(2px, 0, 0); }

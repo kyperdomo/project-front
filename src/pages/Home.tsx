@@ -12,15 +12,26 @@ const Home: React.FC = () => {
       <header className="home-navbar">
         <h2 className="logo">SolverControl S.A.S<span>.</span></h2>
 
-        <button 
-          className="login-btn"
-          onClick={() => navigate("/login")}
-        >
-          Acceso Administrativo
-        </button>
+        <div className="auth-buttons">
+          {/* Botón sutil para el auxiliar */}
+          <button 
+            className="auxiliar-btn"
+            onClick={() => navigate("/login?role=auxiliar")}
+          >
+            Acceso Auxiliar
+          </button>
+          
+          {/* Botón con borde para el administrador */}
+          <button 
+            className="login-btn"
+            onClick={() => navigate("/login?role=admin")}
+          >
+            Acceso Administrativo
+          </button>
+        </div>
       </header>
 
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="hero">
         <div className="badge">Solución Contable Educativa</div>
         <h1>Gestión de Facturación para Instituciones Educativas</h1>
@@ -30,19 +41,13 @@ const Home: React.FC = () => {
         </p>
 
         <div className="home-actions">
-          {/* <button 
-            className="cta-btn"
-            onClick={() => navigate("/login")}
-          >
-            Empezar Registro
-          </button> */}
-          { <button className="secondary-cta">
+          <button className="secondary-cta">
             Saber más
-          </button> }
+          </button>
         </div>
       </section>
 
-      {/* Pequeña sección de features decorativa */}
+      {/* MINI FEATURES DECORATIVAS */}
       <section className="mini-features">
         <div className="feature-item">✓ Registro Seguro</div>
         <div className="feature-item">✓ Reportes de Gastos</div>

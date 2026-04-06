@@ -1,0 +1,153 @@
+/* ==========================================================================
+   ESTILOS PARA EL MÓDULO DE ESTUDIANTES
+   ========================================================================== */
+
+/* --- ZONA DE CARGA (Upload Section) --- */
+.upload-section {
+  margin-bottom: 35px;
+}
+
+.upload-card {
+  background: white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.upload-card:hover {
+  border-color: #5c59e8;
+  background-color: #f8faff;
+  transform: translateY(-2px);
+}
+
+.upload-icon {
+  font-size: 3.5rem;
+  /* Ajuste: Más espacio para que no sature el título */
+  margin-bottom: 30px; 
+  display: block;
+}
+
+.upload-card h3 {
+  color: #1e293b;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.upload-card p {
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+/* Botón de Selección de Archivos */
+.btn-upload {
+  background: #5c59e8;
+  color: white;
+  padding: 14px 35px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s ease;
+  box-shadow: 0 10px 15px -3px rgba(92, 89, 232, 0.3);
+}
+
+.btn-upload:hover {
+  background: #4f46e5;
+  transform: scale(1.02);
+}
+
+.btn-upload:active {
+  transform: scale(0.98);
+}
+
+.file-info {
+  display: block;
+  margin-top: 18px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* --- TABLA Y CONTENEDORES --- */
+.table-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 0 5px;
+}
+
+/* Título de la tabla con alta visibilidad */
+.table-title {
+  color: #1e293b !important; 
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.025em;
+  opacity: 1 !important;
+}
+
+.btn-save-all {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save-all:hover {
+  background: #059669;
+}
+
+/* --- ETIQUETAS Y ESTADOS DENTRO DE TABLA --- */
+.grade-tag {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Mensaje de tabla vacía */
+.empty-table-msg {
+  text-align: center;
+  padding: 60px !important;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* Iconos de acciones (basura, editar, etc) */
+.actions-icons span {
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.actions-icons span:hover {
+  transform: scale(1.2);
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+  .table-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .upload-card {
+    padding: 25px;
+  }
+}
