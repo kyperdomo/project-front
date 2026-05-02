@@ -13,20 +13,11 @@ const Home: React.FC = () => {
         <h2 className="logo">SolverControl S.A.S<span>.</span></h2>
 
         <div className="auth-buttons">
-          {/* Botón sutil para el auxiliar */}
-          <button 
-            className="auxiliar-btn"
-            onClick={() => navigate("/login?role=auxiliar")}
-          >
-            Acceso Auxiliar
-          </button>
-          
-          {/* Botón con borde para el administrador */}
           <button 
             className="login-btn"
-            onClick={() => navigate("/login?role=admin")}
+            onClick={() => navigate("/login")}
           >
-            Acceso Administrativo
+            Iniciar Sesión
           </button>
         </div>
       </header>
@@ -47,7 +38,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* MINI FEATURES DECORATIVAS */}
+      {/* MINI FEATURES */}
       <section className="mini-features">
         <div className="feature-item">✓ Registro Seguro</div>
         <div className="feature-item">✓ Reportes de Gastos</div>

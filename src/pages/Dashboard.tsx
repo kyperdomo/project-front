@@ -4,7 +4,7 @@ import "../styles/Dashboard.css";
 
 // Mantenemos las props para que TypeScript esté feliz
 type Props = {
-  userRole: "admin" | "auxiliar";
+  userRole: "Administrador" | "Auxiliar";
 };
 
 const Dashboard: React.FC<Props> = ({ userRole }) => {
@@ -27,17 +27,17 @@ const Dashboard: React.FC<Props> = ({ userRole }) => {
       <aside className="sidebar">
         <div className="sidebar-header">
           <h2>Sistema Educativo</h2>
-          <span>{userRole === "admin" ? "Gestión Administrativa" : "Gestión Auxiliar"}</span>
+          <span>{userRole === "Administrador" ? "Gestión Administrativa" : "Gestión Auxiliar"}</span>
         </div>
         <nav className="sidebar-nav">
-          {userRole === "admin" && (
+          {userRole === "Administrador" && (
             <div className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} onClick={() => navigate("/dashboard")}>📊 Dashboard</div>
           )}
           <div className={`nav-item ${location.pathname === '/estudiantes' ? 'active' : ''}`} onClick={() => navigate("/estudiantes")}>🎓 Estudiantes</div>
           <div className="nav-item">📄 Facturación</div>
           <div className="nav-item">💳 Pagos</div>
           <div className="nav-item">📈 Reportes</div>
-          {userRole === "admin" && (
+          {userRole === "Administrador" && (
             <div className={`nav-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={() => navigate("/usuarios")}>👥 Usuarios</div>
           )}
         </nav>

@@ -120,16 +120,25 @@
 
 // export default App
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 
-// Definimos los tipos de roles posibles para mayor seguridad
-export type UserRole = "admin" | "auxiliar";
+export type UserRole = "Administrador" | "Auxiliar";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
-  // Agregamos el estado para el rol del usuario
-  const [userRole, setUserRole] = useState<UserRole>("admin");
+
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role") as UserRole | null;
+
+    if (token && role) {
+      setIsAuth(true);
+      setUserRole(role);
+    }
+  }, []);
 
   return (
     <AppRoutes 

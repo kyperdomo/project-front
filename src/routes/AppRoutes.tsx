@@ -5,17 +5,22 @@ import Dashboard from "../pages/Dashboard";
 import Usuarios from "../pages/Usuarios";
 import Estudiantes from "../pages/Estudiantes"; 
 
-// Definimos el tipo de rol para que TypeScript no de errores
-type UserRole = "admin" | "auxiliar";
+// Tipo de roles
+type UserRole = "Administrador" | "Auxiliar";
 
 type Props = {
   isAuth: boolean;
   setIsAuth: (value: boolean) => void;
-  userRole: UserRole;
+  userRole: UserRole | null;
   setUserRole: (role: UserRole) => void;
 };
 
 const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
+
+  if (isAuth && !userRole) {
+    return <div>Cargando...</div>;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -25,43 +30,42 @@ const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
         {/* Rutas Públicas */}
         <Route path="/home" element={<Home />} />
         
-        {/* Pasamos setIsAuth y setUserRole al Login para que guarde quién entró */}
+        {/* Login */}
         <Route 
           path="/login" 
           element={<Login setIsAuth={setIsAuth} setUserRole={setUserRole} />} 
         />
 
-        {/* Manejo de Rutas Protegidas */}
+        {}
         {isAuth ? (
           <>
-            {/* Rutas exclusivas para ADMIN */}
-            {userRole === "admin" ? (
+            {}
+            {userRole === "Administrador" ? (
               <>
                 <Route path="/dashboard" element={<Dashboard userRole={userRole} />} />
                 <Route path="/usuarios" element={<Usuarios userRole={userRole} />} />
               </>
             ) : (
-              /* Si el AUXILIAR intenta entrar a rutas de admin, lo mandamos a estudiantes */
               <>
+                {/*AUXILIAR NO PUEDE ENTRAR */}
                 <Route path="/dashboard" element={<Navigate to="/estudiantes" />} />
                 <Route path="/usuarios" element={<Navigate to="/estudiantes" />} />
               </>
             )}
 
-            {/* Rutas accesibles para AMBOS (Admin y Auxiliar) */}
-            <Route path="/estudiantes" element={<Estudiantes userRole={userRole} />} />
-            {/* Agrega aquí Facturación, Pagos, etc., cuando los tengas */}
+            {/*AMBOS ROLES */}
+            <Route path="/estudiantes" element={<Estudiantes userRole={userRole!} />} />
           </>
         ) : (
-          /* Redirigir al login si no hay sesión iniciada */
           <>
+            {/* No autenticado → login */}
             <Route path="/dashboard" element={<Navigate to="/login" />} />
             <Route path="/usuarios" element={<Navigate to="/login" />} />
             <Route path="/estudiantes" element={<Navigate to="/login" />} />
           </>
         )}
 
-        {/* Catch-all: si la ruta no existe, al Home */}
+        {/* Ruta no encontrada */}
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </BrowserRouter>

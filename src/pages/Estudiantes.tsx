@@ -5,7 +5,7 @@ import "../styles/Usuarios.css";
 import "../styles/Estudiantes.css";
 
 type Props = {
-  userRole: "admin" | "auxiliar";
+  userRole: "Administrador" | "Auxiliar";
 };
 
 const Estudiantes: React.FC<Props> = ({ userRole }) => {
@@ -18,10 +18,10 @@ const Estudiantes: React.FC<Props> = ({ userRole }) => {
       <aside className="sidebar">
         <div className="sidebar-header">
           <h2>Sistema Educativo</h2>
-          <span>{userRole === "admin" ? "Gestión Administrativa" : "Gestión Auxiliar"}</span>
+          <span>{userRole === "Administrador" ? "Gestión Administrativa" : "Gestión Auxiliar"}</span>
         </div>
         <nav className="sidebar-nav">
-          {userRole === "admin" && (
+          {userRole === "Administrador" && (
             <div 
               className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} 
               onClick={() => navigate("/dashboard")}
@@ -41,7 +41,7 @@ const Estudiantes: React.FC<Props> = ({ userRole }) => {
           <div className="nav-item">💳 Pagos</div>
           <div className="nav-item">📈 Reportes</div>
 
-          {userRole === "admin" && (
+          {userRole === "Administrador" && (
             <div 
               className={`nav-item ${location.pathname === '/usuarios' ? 'active' : ''}`} 
               onClick={() => navigate("/usuarios")}
@@ -61,7 +61,7 @@ const Estudiantes: React.FC<Props> = ({ userRole }) => {
         <header className="content-header">
           <h1>Gestión de Estudiantes</h1>
           <p>
-            {userRole === "admin" 
+            {userRole === "Administrador" 
               ? "Carga masiva y administración de alumnos" 
               : "Portal de carga de archivos de alumnos"}
           </p>
