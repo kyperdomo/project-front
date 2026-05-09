@@ -1,49 +1,72 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
-// Definimos el tipo para que coincida con App.tsx
-type UserRole = "admin" | "auxiliar";
+type UserRole = "Administrador" | "Auxiliar";
 
 type Props = {
   setIsAuth: (value: boolean) => void;
-  setUserRole: (role: UserRole) => void; 
+  setUserRole: (role: UserRole) => void;
+  setUserName: (name: string) => void;
 };
 
-const Login = ({ setIsAuth, setUserRole }: Props) => {
+const Login = ({ setIsAuth, setUserRole, setUserName }: Props) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // 1. Detectamos el rol desde la URL
-  const queryParams = new URLSearchParams(location.search);
-  const roleFromUrl = (queryParams.get("role") as UserRole) || "admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 2. MODO DESARROLLO: No validamos campos, solo aplicamos el rol y entramos
-    setUserRole(roleFromUrl);
-    setIsAuth(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/usuarios/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
 
-    // 3. Redirección automática según el flujo que definimos
-    if (roleFromUrl === "auxiliar") {
-      navigate("/estudiantes");
-    } else {
-      navigate("/dashboard");
+      if (!response.ok) {
+        throw new Error("Credenciales incorrectas");
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.nombre || data.username || data.email);
+      localStorage.setItem("role", data.role);
+
+      setIsAuth(true);
+      setUserRole(data.role);
+      setUserName(data.nombre || data.username || data.email);
+
+      navigate("/seleccionar-institucion"); // siempre pasa por selección
+       //if (data.role === "Auxiliar") {
+         //navigate("/estudiantes");
+       //} else {
+         //navigate("/Usuarios");
+       //}
+
+    } catch (error) {
+      setError("Correo o contraseña incorrectos");
+      console.error(error);
     }
   };
 
-  const isAuxiliar = roleFromUrl === "auxiliar";
-
   return (
-    <div className={`login-container ${isAuxiliar ? "theme-auxiliar" : ""}`}>
+    <div className="login-container">
       <div className="login-box">
-        <h2 className="login-title">
-          {isAuxiliar ? "Portal Auxiliar" : "Portal Administrativo"}
-        </h2>
+        <h2 className="login-title">Iniciar Sesión</h2>
+
+        <p className="login-subtitle">Accede a tu cuenta</p>
+
+        {error && <p className="login-error">{error}</p>}
 
         <form onSubmit={handleLogin}>
           <input
@@ -62,17 +85,10 @@ const Login = ({ setIsAuth, setUserRole }: Props) => {
             className="login-input"
           />
 
-          <button 
-            type="submit" 
-            className={`login-button ${isAuxiliar ? "btn-auxiliar" : ""}`}
-          >
+          <button type="submit" className="login-button">
             Ingresar
           </button>
         </form>
-        
-        <button className="back-link" onClick={() => navigate("/home")}>
-          ← Volver al inicio
-        </button>
       </div>
     </div>
   );

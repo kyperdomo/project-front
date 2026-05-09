@@ -120,23 +120,69 @@
 
 // export default App
 
-import { useState } from "react";
+
+
+
+
+// import { useState } from "react";
+// import AppRoutes from "./routes/AppRoutes";
+
+// // Definimos los tipos de roles posibles para mayor seguridad
+// export type UserRole = "admin" | "auxiliar";
+
+// function App() {
+//   const [isAuth, setIsAuth] = useState(false);
+//   // Agregamos el estado para el rol del usuario
+//   const [userRole, setUserRole] = useState<UserRole>("admin");
+
+//   return (
+//     <AppRoutes 
+//       isAuth={isAuth} 
+//       setIsAuth={setIsAuth} 
+//       userRole={userRole} 
+//       setUserRole={setUserRole} 
+//     />
+//   );
+// }
+
+// export default App;
+
+import { useState, useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 
-// Definimos los tipos de roles posibles para mayor seguridad
-export type UserRole = "admin" | "auxiliar";
+export type UserRole = "Administrador" | "Auxiliar";
+export type Institucion = string;
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
-  // Agregamos el estado para el rol del usuario
-  const [userRole, setUserRole] = useState<UserRole>("admin");
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [institucion, setInstitucion] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role") as UserRole | null;
+    const inst = localStorage.getItem("institucion");
+    const name = localStorage.getItem("userName") || "";
+
+    if (token && role) {
+      setIsAuth(true);
+      setUserRole(role);
+      setUserName(name);
+      if (inst) setInstitucion(inst);
+    }
+  }, []);
 
   return (
-    <AppRoutes 
-      isAuth={isAuth} 
-      setIsAuth={setIsAuth} 
-      userRole={userRole} 
-      setUserRole={setUserRole} 
+    <AppRoutes
+      isAuth={isAuth}
+      setIsAuth={setIsAuth}
+      userRole={userRole}
+      setUserRole={setUserRole}
+      institucion={institucion}
+      setInstitucion={setInstitucion}
+      userName={userName}
+      setUserName={setUserName}
     />
   );
 }
