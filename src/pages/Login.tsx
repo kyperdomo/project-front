@@ -136,11 +136,15 @@ const Login = ({ setIsAuth, setUserRole, setUserName }: Props) => {
       const data = await response.json();
 
       localStorage.setItem("token", data.token);
+<<<<<<< HEAD
       localStorage.setItem("userName", data.nombre || data.username || data.email);
+=======
+>>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
       localStorage.setItem("role", data.role);
 
       setIsAuth(true);
       setUserRole(data.role);
+<<<<<<< HEAD
       setUserName(data.nombre || data.username || data.email);
 
       navigate("/seleccionar-institucion"); // siempre pasa por selección
@@ -149,6 +153,14 @@ const Login = ({ setIsAuth, setUserRole, setUserName }: Props) => {
        //} else {
          //navigate("/Usuarios");
        //}
+=======
+
+      if (data.role === "Auxiliar") {
+        navigate("/estudiantes");
+      } else {
+        navigate("/Usuarios");
+      }
+>>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
 
     } catch (error) {
       setError("Correo o contraseña incorrectos");
