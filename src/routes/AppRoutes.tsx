@@ -6,10 +6,6 @@ import Usuarios from "../pages/Usuarios";
 import Estudiantes from "../pages/Estudiantes";
 import SeleccionInstitucion from "../pages/SeleccionInstitucion";
 
-<<<<<<< HEAD
-=======
-// Tipo de roles
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
 type UserRole = "Administrador" | "Auxiliar";
 
 type Props = {
@@ -23,7 +19,6 @@ type Props = {
   setUserName: (name: string) => void;
 };
 
-<<<<<<< HEAD
 const AppRoutes = ({
   isAuth,
   setIsAuth,
@@ -34,9 +29,6 @@ const AppRoutes = ({
   userName,
   setUserName,
 }: Props) => {
-=======
-const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
 
   if (isAuth && !userRole) {
     return <div>Cargando...</div>;
@@ -50,7 +42,6 @@ const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
 
         {/* Rutas públicas */}
         <Route path="/home" element={<Home />} />
-<<<<<<< HEAD
         <Route
           path="/login"
           element={
@@ -77,19 +68,6 @@ const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
             />
 
             {/* Rutas protegidas — requieren institución seleccionada */}
-=======
-        
-        {/* Login */}
-        <Route 
-          path="/login" 
-          element={<Login setIsAuth={setIsAuth} setUserRole={setUserRole} />} 
-        />
-
-        {}
-        {isAuth ? (
-          <>
-            {}
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
             {userRole === "Administrador" ? (
               <>
                 <Route
@@ -117,7 +95,6 @@ const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
               </>
             )}
 
-<<<<<<< HEAD
             {/* Ambos roles */}
             <Route
               path="/estudiantes"
@@ -127,10 +104,6 @@ const AppRoutes = ({ isAuth, setIsAuth, userRole, setUserRole }: Props) => {
                   : <Navigate to="/seleccionar-institucion" />
               }
             />
-=======
-            {/*AMBOS ROLES */}
-            <Route path="/estudiantes" element={<Estudiantes userRole={userRole!} />} />
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
           </>
         ) : (
           <>

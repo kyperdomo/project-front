@@ -124,7 +124,6 @@ import { useState, useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 
 export type UserRole = "Administrador" | "Auxiliar";
-<<<<<<< HEAD
 export type Institucion = string;
 
 function App() {
@@ -132,31 +131,18 @@ function App() {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [institucion, setInstitucion] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
-=======
-
-function App() {
-  const [isAuth, setIsAuth] = useState(false);
-
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role") as UserRole | null;
-<<<<<<< HEAD
     const inst = localStorage.getItem("institucion");
     const name = localStorage.getItem("userName") || "";
-=======
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
 
     if (token && role) {
       setIsAuth(true);
       setUserRole(role);
-<<<<<<< HEAD
       setUserName(name);
       if (inst) setInstitucion(inst);
-=======
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
     }
   }, []);
 

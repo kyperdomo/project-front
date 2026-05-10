@@ -167,14 +167,10 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
 
         <nav className="sidebar-nav">
           <div className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} onClick={() => navigate("/dashboard")}>📊 Dashboard</div>
-<<<<<<< HEAD
           <div className={`nav-item ${location.pathname === '/estudiantes' ? 'active' : ''}`} onClick={() => navigate("/estudiantes")}>🎓 Estudiantes</div>
           <div className="nav-item">📄 Facturación</div>
           <div className="nav-item">💳 Pagos</div>
           <div className="nav-item">📈 Reportes</div>
-=======
-          <div className="nav-item" onClick={() => navigate("/estudiantes")}>🎓 Estudiantes</div>
->>>>>>> 29501e6e431d0031c98f3ad3cf38e78b2b00d775
           <div className={`nav-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={() => navigate("/usuarios")}>👥 Usuarios</div>
         </nav>
 
