@@ -24,7 +24,7 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
   const totalAdmins = users.filter(u => u.role === "Administrador").length;
   const totalAuxiliares = users.filter(u => u.role === "Auxiliar").length;
 
-  // 🔥 FETCH USERS
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {

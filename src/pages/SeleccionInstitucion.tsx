@@ -183,7 +183,7 @@
 // export default SeleccionInstitucion;
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/SeleccionInstitucion.css";
 
@@ -192,7 +192,6 @@ export type Institucion = string;
 type UserRole = "Administrador" | "Auxiliar";
 
 type InstitucionData = {
-  id: string;
   nombre: string;
   nit: string;
   direccion: string;
@@ -216,7 +215,6 @@ type Props = {
 const institucionesIniciales: InstitucionData[] = [];
 
 const camposVacios: InstitucionData = {
-  id: "",
   nombre: "",
   nit: "",
   direccion: "",
@@ -227,16 +225,57 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
   const navigate = useNavigate();
   const [seleccionada, setSeleccionada] = useState<string | null>(null);
   const [instituciones, setInstituciones] = useState<InstitucionData[]>(institucionesIniciales);
+  const token = localStorage.getItem("token");
 
   // Modal agregar
   const [mostrarModal, setMostrarModal] = useState(false);
   const [form, setForm] = useState<InstitucionData>(camposVacios);
   const [errores, setErrores] = useState<Partial<InstitucionData>>({});
 
+  useEffect(() => {
+    obtenerInstituciones();
+  }, []);
+
+  const obtenerInstituciones = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/colegios/get", 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al obtener colegios");
+      }
+
+      const data = await response.json();
+
+      setInstituciones(data);
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const handleIngresar = () => {
+
     if (!seleccionada) return;
-    setInstitucion(seleccionada);
-    localStorage.setItem("institucion", seleccionada);
+
+    const institucionSeleccionada = instituciones.find(
+      (inst) => inst.nit === seleccionada
+    );
+
+    if (!institucionSeleccionada) return;
+
+    setInstitucion(institucionSeleccionada.nombre);
+
+    localStorage.setItem(
+      "institucion",
+      institucionSeleccionada.nombre
+    );
+
     navigate("/dashboard");
   };
 
@@ -248,7 +287,6 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
 
   const validar = (): boolean => {
     const nuevosErrores: Partial<InstitucionData> = {};
-    if (!form.id.trim()) nuevosErrores.id = "El ID es obligatorio";
     if (!form.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio";
     if (!form.nit.trim()) nuevosErrores.nit = "El NIT es obligatorio";
     if (!form.direccion.trim()) nuevosErrores.direccion = "La dirección es obligatoria";
@@ -257,12 +295,42 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleAgregar = () => {
+  const handleAgregar = async () => {
     if (!validar()) return;
-    setInstituciones((prev) => [...prev, { ...form }]);
-    setForm(camposVacios);
-    setErrores({});
-    setMostrarModal(false);
+
+    try {
+
+      const response = await fetch(
+        "http://localhost:8080/api/colegios/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      const mensaje = await response.text();
+
+      if (!response.ok) {
+        alert(mensaje);
+        return;
+      }
+
+      alert(mensaje);
+
+      await obtenerInstituciones();
+
+      setForm(camposVacios);
+      setErrores({});
+      setMostrarModal(false);
+
+    } catch (error) {
+      console.error(error);
+      alert("Error al conectar con el servidor");
+    }
   };
 
   const handleCerrarModal = () => {
@@ -285,16 +353,16 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
         <div className="si-list">
           {instituciones.map((inst) => (
             <div
-              key={inst.id}
-              className={`si-inst-card ${seleccionada === inst.id ? "selected" : ""}`}
-              onClick={() => setSeleccionada(inst.id)}
+              key={inst.nit}
+              className={`si-inst-card ${seleccionada === inst.nit ? "selected" : ""}`}
+              onClick={() => setSeleccionada(inst.nit)}
             >
               <div className="si-inst-icon">🏫</div>
               <div className="si-inst-info">
                 <span className="si-inst-nombre">{inst.nombre}</span>
                 <span className="si-inst-nit">NIT {inst.nit}</span>
               </div>
-              {seleccionada === inst.id && <span className="si-check">✓</span>}
+              {seleccionada === inst.nit && <span className="si-check">✓</span>}
             </div>
           ))}
         </div>
@@ -324,7 +392,6 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
             <div className="si-modal-body">
               {(
                 [
-                  { name: "id", label: "ID", placeholder: "Ej: inst_001" },
                   { name: "nombre", label: "Nombre", placeholder: "Ej: Colegio San José" },
                   { name: "nit", label: "NIT", placeholder: "Ej: 900.111.222-3" },
                   { name: "direccion", label: "Dirección", placeholder: "Ej: Calle 10 #20-30" },
