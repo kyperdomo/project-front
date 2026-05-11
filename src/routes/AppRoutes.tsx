@@ -162,6 +162,7 @@ const AppRoutes = ({
               </>
             ) : (
               <>
+                {/*AUXILIAR NO PUEDE ENTRAR */}
                 <Route path="/dashboard" element={<Navigate to="/estudiantes" />} />
                 <Route path="/usuarios" element={<Navigate to="/estudiantes" />} />
               </>
