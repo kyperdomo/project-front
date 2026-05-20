@@ -1,155 +1,153 @@
-/* RESET PARA EVITAR MÁRGENES EXTRAÑOS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ==========================================================================
+   ESTILOS PARA EL MÓDULO DE ESTUDIANTES
+   ========================================================================== */
+
+/* --- ZONA DE CARGA (Upload Section) --- */
+.upload-section {
+  margin-bottom: 35px;
 }
 
-.home-container {
-  width: 100vw; 
-  min-height: 100vh;
-  background: #ffffff;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  margin: 0;
-  padding: 0;
-  position: absolute; 
-  left: 0;
-  top: 0;
-  overflow-x: hidden;
+.upload-card {
+  background: white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* NAVBAR */
-.home-navbar {
+.upload-card:hover {
+  border-color: #5c59e8;
+  background-color: #f8faff;
+  transform: translateY(-2px);
+}
+
+.upload-icon {
+  font-size: 3.5rem;
+  /* Ajuste: Más espacio para que no sature el título */
+  margin-bottom: 30px; 
+  display: block;
+}
+
+.upload-card h3 {
+  color: #1e293b;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.upload-card p {
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+/* Botón de Selección de Archivos */
+.btn-upload {
+  background: #5c59e8;
+  color: white;
+  padding: 14px 35px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s ease;
+  box-shadow: 0 10px 15px -3px rgba(92, 89, 232, 0.3);
+}
+
+.btn-upload:hover {
+  background: #4f46e5;
+  transform: scale(1.02);
+}
+
+.btn-upload:active {
+  transform: scale(0.98);
+}
+
+.file-info {
+  display: block;
+  margin-top: 18px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* --- TABLA Y CONTENEDORES --- */
+.table-header-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 60px;
-  background: white;
-}
-
-.logo {
-  color: #1b4332; /* Verde bosque */
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.logo span {
-  color: #fb8c00; /* Naranja del logo */
-}
-
-/* CONTENEDOR DE BOTONES DE ACCESO */
-.auth-buttons {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.auxiliar-btn {
-  background: transparent;
-  border: none;
-  color: #64748b; /* Gris elegante */
-  padding: 10px 15px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.auxiliar-btn:hover {
-  color: #fb8c00; /* Resalta con el naranja del logo al pasar el mouse */
-}
-
-.login-btn {
-  background: transparent;
-  border: 1.5px solid #1b4332;
-  color: #1b4332;
-  padding: 10px 24px;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.login-btn:hover {
-  background: #f0f4f2;
-  transform: translateY(-1px);
-}
-
-/* HERO SECTION */
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-top: 100px;
-  padding: 0 20px;
-}
-
-.badge {
-  background: #ebf5eb;
-  color: #2e7d32;
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.hero h1 {
-  font-size: 54px;
-  color: #1b4332;
-  max-width: 850px;
-  line-height: 1.1;
   margin-bottom: 25px;
+  padding: 0 5px;
+}
+
+/* Título de la tabla con alta visibilidad */
+.table-title {
+  color: #1e293b !important; 
+  font-size: 1.6rem;
   font-weight: 800;
-  letter-spacing: -2px;
+  margin: 0;
+  letter-spacing: -0.025em;
+  opacity: 1 !important;
 }
 
-.hero p {
-  color: #64748b;
-  font-size: 19px;
-  max-width: 600px;
-  line-height: 1.6;
-  margin: 0 auto 35px;
-}
-
-.home-actions {
-  display: flex;
-  gap: 15px;
-}
-
-.secondary-cta {
-  background: #f8fafc;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  padding: 16px 40px;
-  border-radius: 14px;
-  font-weight: 600;
+.btn-save-all {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.2s;
 }
 
-.secondary-cta:hover {
+.btn-save-all:hover {
+  background: #059669;
+}
+
+/* --- ETIQUETAS Y ESTADOS DENTRO DE TABLA --- */
+.grade-tag {
   background: #f1f5f9;
-  border-color: #cbd5e1;
+  color: #475569;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* DECORATIVO FEATURES */
-.mini-features {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 80px;
+/* Mensaje de tabla vacía */
+.empty-table-msg {
+  text-align: center;
+  padding: 60px !important;
   color: #94a3b8;
-  font-weight: 500;
-  font-size: 14px;
+  font-style: italic;
+  font-size: 1.1rem;
 }
 
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Iconos de acciones (basura, editar, etc) */
+.actions-icons span {
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.actions-icons span:hover {
+  transform: scale(1.2);
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+  .table-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .upload-card {
+    padding: 25px;
+  }
 }
