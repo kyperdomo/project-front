@@ -1,0 +1,200 @@
+/* ==========================================================================
+   MÓDULO HISTORIAL DE CARGAS
+   Extiende el lenguaje visual de Dashboard.css / Estudiantes.css:
+   Inter, radios grandes, sombras suaves, acento indigo, pills de estado.
+   ========================================================================== */
+
+/* --- BARRA DE FILTROS (misma tarjeta que stat-card / recent-invoices) --- */
+.hc-filtros {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  padding: 22px 26px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.hc-campo-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.hc-label {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hc-select,
+.hc-input {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.hc-select:focus,
+.hc-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.hc-btn-limpiar {
+  padding: 10px 20px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+.hc-btn-limpiar:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+/* --- ESTADO DE CARGA --- */
+.hc-cargando {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* --- ESTADO DE ERROR --- */
+.hc-error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* --- BADGES DE ESTADO (mismos colores que .status-pill) --- */
+.hc-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.hc-badge-procesado {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.hc-badge-errores {
+  background-color: #fffbeb;
+  color: #f59e0b;
+}
+
+.hc-badge-rechazado {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+/* --- TABLA (estilo propio, no depende de custom-table) --- */
+.hc-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.hc-tabla th,
+.hc-tabla td {
+  text-align: left;
+  vertical-align: middle;
+  padding: 16px 20px;
+}
+
+.hc-tabla th:first-child,
+.hc-tabla td:first-child {
+  padding-left: 0;
+}
+
+.hc-tabla th:last-child,
+.hc-tabla td:last-child {
+  padding-right: 0;
+}
+
+.hc-tabla thead th {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.hc-tabla tbody td {
+  font-size: 0.9rem;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hc-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.hc-tabla tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+.hc-tabla-vacia {
+  text-align: center !important;
+  padding: 40px !important;
+  color: #94a3b8;
+  font-style: italic;
+  white-space: normal !important;
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 768px) {
+  .hc-filtros {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px;
+  }
+
+  .hc-campo-filtro {
+    min-width: 0;
+  }
+
+  .hc-btn-limpiar {
+    height: auto;
+  }
+
+  
+}
+
+/* --- ESTADO SIN REGISTROS / VACÍO --- */
+.hc-error {
+  color: #64748b; /* Cambio de rojo a gris neutro */
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 40px 0;
+  text-align: center;
+}
