@@ -6,6 +6,7 @@
 // import Estudiantes from "../pages/Estudiantes";
 // import Reportes from "../pages/Reportes";
 // import SeleccionInstitucion from "../pages/SeleccionInstitucion";
+// import HistorialCargas from "../pages/HistorialCargas";
 
 // type UserRole = "Administrador" | "Auxiliar";
 
@@ -87,12 +88,21 @@
 //                       : <Navigate to="/seleccionar-institucion" />
 //                   }
 //                 />
+//                 <Route
+//                   path="/historial-cargas"
+//                   element={
+//                     institucion
+//                       ? <HistorialCargas userRole={userRole} />
+//                       : <Navigate to="/seleccionar-institucion" />
+//                   }
+//                 />
 //               </>
 //             ) : (
 //               <>
 //                 {/*AUXILIAR NO PUEDE ENTRAR */}
 //                 <Route path="/dashboard" element={<Navigate to="/estudiantes" />} />
 //                 <Route path="/usuarios" element={<Navigate to="/estudiantes" />} />
+//                 <Route path="/historial-cargas" element={<Navigate to="/estudiantes" />} />
 //               </>
 //             )}
 
@@ -121,6 +131,7 @@
 //             <Route path="/usuarios" element={<Navigate to="/login" />} />
 //             <Route path="/estudiantes" element={<Navigate to="/login" />} />
 //             <Route path="/seleccionar-institucion" element={<Navigate to="/login" />} />
+//             <Route path="/historial-cargas" element={<Navigate to="/login" />} />
 //           </>
 //         )}
 
@@ -140,8 +151,9 @@ import Dashboard from "../pages/Dashboard";
 import Usuarios from "../pages/Usuarios";
 import Estudiantes from "../pages/Estudiantes";
 import Reportes from "../pages/Reportes";
-import SeleccionInstitucion from "../pages/SeleccionInstitucion";
+import Facturacion from "../pages/Facturacion";
 import HistorialCargas from "../pages/HistorialCargas";
+import SeleccionInstitucion from "../pages/SeleccionInstitucion";
 
 type UserRole = "Administrador" | "Auxiliar";
 
@@ -258,6 +270,14 @@ const AppRoutes = ({
                   : <Navigate to="/seleccionar-institucion" />
               }
             />
+            <Route
+              path="/facturacion"
+              element={
+                institucion
+                  ? <Facturacion userRole={userRole!} />
+                  : <Navigate to="/seleccionar-institucion" />
+              }
+            />
           </>
         ) : (
           <>
@@ -265,8 +285,11 @@ const AppRoutes = ({
             <Route path="/dashboard" element={<Navigate to="/login" />} />
             <Route path="/usuarios" element={<Navigate to="/login" />} />
             <Route path="/estudiantes" element={<Navigate to="/login" />} />
-            <Route path="/seleccionar-institucion" element={<Navigate to="/login" />} />
             <Route path="/historial-cargas" element={<Navigate to="/login" />} />
+            <Route path="/facturacion" element={<Navigate to="/login" />} />
+            <Route path="/dashboard" element={<Navigate to="/login" />} />
+
+            <Route path="/seleccionar-institucion" element={<Navigate to="/login" />} />
           </>
         )}
 

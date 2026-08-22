@@ -1,200 +1,348 @@
 /* ==========================================================================
-   MÓDULO HISTORIAL DE CARGAS
-   Extiende el lenguaje visual de Dashboard.css / Estudiantes.css:
-   Inter, radios grandes, sombras suaves, acento indigo, pills de estado.
-   ========================================================================== */
+   HISTORIAL DE CARGAS
+   ========================================================================== 
 
-/* --- BARRA DE FILTROS (misma tarjeta que stat-card / recent-invoices) --- */
+.hc-aviso-demo {
+  font-size: 13px;
+  color: #92400e;
+  font-weight: 600;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 1.25rem;
+}
+
+.hc-aviso-demo code {
+  background: #fef3c7;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* FILTROS 
 .hc-filtros {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-  padding: 22px 26px;
-  margin-bottom: 25px;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 20px;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
-.hc-campo-filtro {
+.hc-filtro-campo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 180px;
+  gap: 6px;
+  min-width: 160px;
 }
 
-.hc-label {
+.hc-filtro-campo label {
+  font-size: 12px;
+  font-weight: 700;
   color: #94a3b8;
-  font-size: 0.75rem;
-  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
-.hc-select,
-.hc-input {
-  padding: 10px 14px;
+.hc-filtro-campo select,
+.hc-filtro-campo input[type="date"] {
+  padding: 9px 12px;
+  font-size: 14px;
   border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
+  border-radius: 10px;
+  background: #ffffff;
   color: #1e293b;
-  background: #f8fafc;
-  transition: all 0.2s ease;
 }
 
-.hc-select:focus,
-.hc-input:focus {
+.hc-filtro-campo select:focus,
+.hc-filtro-campo input[type="date"]:focus {
   outline: none;
-  border-color: #6366f1;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #4f46e5;
 }
 
 .hc-btn-limpiar {
-  padding: 10px 20px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
   border: 1.5px solid #e2e8f0;
-  background: white;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  border-radius: 10px;
+  background: #f8fafc;
   color: #64748b;
   cursor: pointer;
-  height: 42px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .hc-btn-limpiar:hover {
   background: #f1f5f9;
-  color: #1e293b;
   border-color: #cbd5e1;
 }
 
-/* --- ESTADO DE CARGA --- */
-.hc-cargando {
+/* TABLA 
+.hc-tabla-container {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.hc-vacio {
+  text-align: center;
   color: #94a3b8;
-  font-size: 0.9rem;
   font-style: italic;
-  padding: 40px 0;
-  text-align: center;
+  font-size: 14px;
+  padding: 2.5rem 1rem;
 }
 
-/* --- ESTADO DE ERROR --- */
-.hc-error {
-  color: #ef4444;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 40px 0;
-  text-align: center;
-}
-
-/* --- BADGES DE ESTADO (mismos colores que .status-pill) --- */
-.hc-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.hc-badge-procesado {
-  background-color: #ecfdf5;
-  color: #10b981;
-}
-
-.hc-badge-errores {
-  background-color: #fffbeb;
-  color: #f59e0b;
-}
-
-.hc-badge-rechazado {
-  background-color: #fef2f2;
-  color: #ef4444;
-}
-
-/* --- TABLA (estilo propio, no depende de custom-table) --- */
 .hc-tabla {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
 }
 
-.hc-tabla th,
-.hc-tabla td {
+.hc-tabla th {
   text-align: left;
-  vertical-align: middle;
-  padding: 16px 20px;
-}
-
-.hc-tabla th:first-child,
-.hc-tabla td:first-child {
-  padding-left: 0;
-}
-
-.hc-tabla th:last-child,
-.hc-tabla td:last-child {
-  padding-right: 0;
-}
-
-.hc-tabla thead th {
+  font-size: 12px;
+  font-weight: 700;
   color: #94a3b8;
-  font-size: 0.75rem;
-  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.hc-tabla td {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
 }
 
-.hc-tabla tbody td {
-  font-size: 0.9rem;
-  color: #475569;
-  border-bottom: 1px solid #f1f5f9;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hc-tabla tbody tr:last-child td {
+.hc-tabla tr:last-child td {
   border-bottom: none;
 }
 
-.hc-tabla tbody tr:hover td {
-  background-color: #f8fafc;
+.hc-tabla tr:hover td {
+  background: #f8fafc;
 }
 
-.hc-tabla-vacia {
-  text-align: center !important;
-  padding: 40px !important;
+.hc-archivo {
+  font-weight: 600;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ESTADOS 
+.hc-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.hc-badge-ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.hc-badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.hc-badge-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.hc-registros-error {
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+}*/
+
+/* ==========================================================================
+   HISTORIAL DE CARGAS
+   ========================================================================== */
+
+.hc-aviso-demo {
+  font-size: 13px;
+  color: #92400e;
+  font-weight: 600;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 1.25rem;
+}
+
+.hc-aviso-demo code {
+  background: #fef3c7;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.hc-aviso-error {
+  font-size: 13px;
+  color: #991b1b;
+  font-weight: 600;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 1.25rem;
+}
+
+/* FILTROS */
+.hc-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.hc-filtro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.hc-filtro-campo label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hc-filtro-campo select,
+.hc-filtro-campo input[type="date"] {
+  padding: 9px 12px;
+  font-size: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1e293b;
+}
+
+.hc-filtro-campo select:focus,
+.hc-filtro-campo input[type="date"]:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.hc-btn-limpiar {
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.hc-btn-limpiar:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* TABLA */
+.hc-tabla-container {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.hc-vacio {
+  text-align: center;
   color: #94a3b8;
   font-style: italic;
-  white-space: normal !important;
+  font-size: 14px;
+  padding: 2.5rem 1rem;
 }
 
-/* --- RESPONSIVIDAD --- */
-@media (max-width: 768px) {
-  .hc-filtros {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 18px;
-  }
-
-  .hc-campo-filtro {
-    min-width: 0;
-  }
-
-  .hc-btn-limpiar {
-    height: auto;
-  }
-
-  
+.hc-tabla {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-/* --- ESTADO SIN REGISTROS / VACÍO --- */
-.hc-error {
-  color: #64748b; /* Cambio de rojo a gris neutro */
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 40px 0;
-  text-align: center;
+.hc-tabla th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.hc-tabla td {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.hc-tabla tr:last-child td {
+  border-bottom: none;
+}
+
+.hc-tabla tr:hover td {
+  background: #f8fafc;
+}
+
+.hc-archivo {
+  font-weight: 600;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ESTADOS */
+.hc-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.hc-badge-ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.hc-badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.hc-badge-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.hc-registros-error {
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
 }

@@ -48,15 +48,24 @@ const Sidebar: React.FC<Props> = ({ userRole }) => {
           🎓 Estudiantes
         </div>
 
-        <div className="nav-item">📄 Facturación</div>
-        <div className="nav-item">💳 Pagos</div>
-
         <div
-          className={`nav-item ${isActive("/reportes") ? "active" : ""}`}
-          onClick={() => navigate("/reportes")}
+          className={`nav-item ${isActive("/facturacion") ? "active" : ""}`}
+          onClick={() => navigate("/facturacion")}
         >
-          📈 Reportes
+          📄 Facturación
         </div>
+
+
+        {/* <div className="nav-item">💳 Pagos</div> */}
+
+        {userRole === "Administrador" && (
+          <div
+            className={`nav-item ${isActive("/reportes") ? "active" : ""}`}
+            onClick={() => navigate("/reportes")}
+          >
+            📈 Reportes
+          </div>
+        )}
 
         {userRole === "Administrador" && (
           <div
