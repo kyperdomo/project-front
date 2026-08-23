@@ -59,6 +59,7 @@ const BASE_URL = "http://localhost:8080";
 
 const Reportes: React.FC<Props> = ({ userRole }) => {
   const institucionActual = localStorage.getItem("institucion") || "Institución";
+  const institucionNit = localStorage.getItem("institucionNit") || "";
   const usuarioActual = localStorage.getItem("userName") || "Usuario";
   const token = localStorage.getItem("token");
 
@@ -84,9 +85,13 @@ const Reportes: React.FC<Props> = ({ userRole }) => {
 
   // ── LLAMADAS AL BACKEND ──────────────────────────────────────────
   const fetchDatos = async (tipo: TipoReporte): Promise<any> => {
-    const response = await fetch(`${BASE_URL}/api/reportes/${tipo}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    if (!institucionNit) {
+      throw new Error("No se encontró la institución activa. Vuelve a iniciar sesión.");
+    }
+    const response = await fetch(
+      `${BASE_URL}/api/reportes/${tipo}?colegioNit=${encodeURIComponent(institucionNit)}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     if (!response.ok) throw new Error(`Error al obtener reporte de ${tipo}`);
     return await response.json();
   };

@@ -139,6 +139,45 @@
   transform: scale(1.2);
 }
 
+/* --- MENSAJE DE ERROR --- */
+.est-error-msg {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* --- FILAS CON ERROR (pantalla de resultados de carga) --- */
+.fila-con-error {
+  background-color: #fef2f2;
+}
+
+.custom-table td input {
+  width: 100%;
+  min-width: 90px;
+  padding: 6px 8px;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: white;
+}
+
+.custom-table td input:focus {
+  outline: none;
+  border-color: #5c59e8;
+}
+
+.custom-table select {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: white;
+  width: 100%;
+}
+
 /* Responsividad para pantallas pequeñas */
 @media (max-width: 768px) {
   .table-header-flex {

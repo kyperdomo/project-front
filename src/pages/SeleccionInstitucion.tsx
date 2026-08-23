@@ -91,6 +91,13 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
       institucionSeleccionada.nombre
     );
 
+    // Se guarda también el NIT: es lo que usa el backend para filtrar
+    // los reportes por el colegio activo (ver Reportes.tsx).
+    localStorage.setItem(
+      "institucionNit",
+      institucionSeleccionada.nit
+    );
+
     navigate("/dashboard");
   };
 
