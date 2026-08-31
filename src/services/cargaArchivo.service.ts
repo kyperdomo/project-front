@@ -1,4 +1,11 @@
-import type { FilaCarga, PrediccionMapeo, ResultadoCarga } from "../types/cargaArchivo";
+import type {
+  ColumnaMapeada,
+  CorreccionMapeo,
+  CampoModelo,
+  FilaCarga,
+  PrediccionMapeo,
+  ResultadoCarga,
+} from "../types/cargaArchivo";
 import { BASE_URL } from "./config";
 
 // Convierte una fila tal como se muestra en la tabla (campos en
@@ -12,6 +19,8 @@ export const filaACampos = (fila: FilaCarga): Record<string, string> => ({
   acudiente_identificacion: fila.acudienteIdentificacion,
   acudiente_nombre: fila.acudienteNombre,
   acudiente_telefono: fila.telefono,
+  acudiente_direccion: fila.direccion,
+  acudiente_correo: fila.correo,
   factura_valor: fila.valorFactura,
   factura_fecha_generacion: fila.fechaFactura,
 });
@@ -101,4 +110,45 @@ export const corregirFila = async (
   }
 
   return (await response.json()) as FilaCarga;
+};
+
+
+// ── PASO 4: reentrenar el modelo con las correcciones de la usuaria ──
+// Esto es lo que cierra el ciclo de aprendizaje: sin esta llamada, el
+// clasificador vuelve a equivocarse en la misma columna el mes siguiente.
+// Se envían las features que el propio backend devolvió en el preview,
+// no ceros, para que el ejemplo aprendido sea completo.
+export const construirCorreccion = (
+  columna: ColumnaMapeada,
+  campoCorrecto: CampoModelo
+): CorreccionMapeo => ({
+  header_text: columna.headerText,
+  pct_numeric: columna.features?.pct_numeric ?? 0,
+  pct_date_like: columna.features?.pct_date_like ?? 0,
+  pct_mobile_pattern: columna.features?.pct_mobile_pattern ?? 0,
+  pct_email_pattern: columna.features?.pct_email_pattern ?? 0,
+  avg_length: columna.features?.avg_length ?? 0,
+  pct_unique: columna.features?.pct_unique ?? 0,
+  correct_field: campoCorrecto,
+});
+
+export const reentrenarModelo = async (
+  token: string | null,
+  correcciones: CorreccionMapeo[]
+): Promise<{ status: string; n_total_examples: number; new_train_accuracy: number }> => {
+  const response = await fetch(`${BASE_URL}/api/cargas/retrain`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ corrections: correcciones }),
+  });
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? "No se pudo reentrenar el modelo con las correcciones");
+  }
+
+  return await response.json();
 };

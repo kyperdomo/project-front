@@ -12,6 +12,8 @@ export type CampoModelo =
   | "acudiente_nombre"
   | "acudiente_identificacion"
   | "acudiente_telefono"
+  | "acudiente_direccion"
+  | "acudiente_correo"
   | "factura_valor"
   | "factura_fecha_generacion";
 
@@ -22,6 +24,9 @@ export const CAMPOS_MODELO: { valor: CampoModelo; etiqueta: string }[] = [
   { valor: "acudiente_nombre", etiqueta: "Nombre del acudiente" },
   { valor: "acudiente_identificacion", etiqueta: "Identificación del acudiente" },
   { valor: "acudiente_telefono", etiqueta: "Teléfono del acudiente" },
+  // Siigo exige ambos para emitir la factura electrónica.
+  { valor: "acudiente_direccion", etiqueta: "Dirección del acudiente" },
+  { valor: "acudiente_correo", etiqueta: "Correo del acudiente" },
   { valor: "factura_valor", etiqueta: "Valor a facturar" },
   { valor: "factura_fecha_generacion", etiqueta: "Fecha de la factura" },
 ];
@@ -29,13 +34,39 @@ export const CAMPOS_MODELO: { valor: CampoModelo; etiqueta: string }[] = [
 export const etiquetaCampo = (campo: string | null): string =>
   CAMPOS_MODELO.find((c) => c.valor === campo)?.etiqueta ?? "Sin identificar";
 
+// Features de contenido que el microservicio calcula por columna.
+// Deben viajar de vuelta al reentrenar: si se envían en ceros, el modelo
+// aprende el encabezado pero pierde toda la evidencia del contenido.
+export type FeaturesColumna = {
+  pct_numeric: number;
+  pct_date_like: number;
+  pct_mobile_pattern: number;
+  pct_email_pattern: number;
+  avg_length: number;
+  pct_unique: number;
+};
+
 // Refleja ColumnMappingDTO.java
 export type ColumnaMapeada = {
   headerText: string;
+  features: FeaturesColumna;
   predictedField: CampoModelo | null;
   confidence: number;
   requiresManualReview: boolean;
   topAlternatives: Record<string, unknown>[];
+};
+
+// Lo que se envía a /api/cargas/retrain cuando la usuaria corrige el
+// campo asignado a una columna (ver RetrainDTOs.CorrectionItem en Java).
+export type CorreccionMapeo = {
+  header_text: string;
+  pct_numeric: number;
+  pct_date_like: number;
+  pct_mobile_pattern: number;
+  pct_email_pattern: number;
+  avg_length: number;
+  pct_unique: number;
+  correct_field: CampoModelo;
 };
 
 // Refleja PredictMappingResponseDTO.java
@@ -57,6 +88,8 @@ export type FilaCarga = {
   acudienteIdentificacion: string;
   acudienteNombre: string;
   telefono: string;
+  direccion: string;
+  correo: string;
   valorFactura: string;
   fechaFactura: string;
   estado: "OK" | "ERROR";

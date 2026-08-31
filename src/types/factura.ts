@@ -15,6 +15,10 @@ export type EstadoFactura = "Pendiente" | "Generada" | "Enviada" | "Aceptada" | 
 
 export type CobroPendiente = {
   id: number;
+  // Advertencias calculadas por el backend: lo que Siigo va a rechazar
+  // de este cobro concreto, visible antes de emitir.
+  advertencias?: string[];
+  correoAcudiente?: string;
   documentoEstudiante: string;
   nombreEstudiante: string;
   grado: string;
@@ -83,6 +87,34 @@ export type FacturaPreview = {
 // Respuesta esperada del backend al enviar una factura.
 export type RespuestaEnvioFactura = {
   estado: EstadoFactura;
+  numeroFactura?: string;
   cufe?: string;
   motivoRechazo?: string;
+};
+
+// Resultado de emitir un lote. El backend nunca aborta por una factura
+// mala: procesa todas y devuelve el detalle fila por fila.
+export type FilaResumenLote = {
+  facturaId: number;
+  estudiante: string;
+  acudiente: string;
+  valor: number;
+  estado: EstadoFactura | "Omitida";
+  numeroFactura: string;
+  cufe: string;
+  motivo: string;
+};
+
+export type ResumenLote = {
+  modo: string;
+  periodo: string;
+  total: number;
+  // Aceptada = la DIAN ya la validó y llegó CUFE.
+  aceptadas: number;
+  // Enviada = guardada en Siigo, validación DIAN aún en curso (Draft).
+  enviadas: number;
+  rechazadas: number;
+  // Ya estaban aceptadas de un envío anterior: no se reenvían.
+  omitidas: number;
+  detalle: FilaResumenLote[];
 };

@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/Dashboard.css";
 import "../styles/Facturacion.css";
-import type { CobroPendiente, EmisorInstitucion, EstadoFactura, FacturaPreview } from "../types/factura";
+import type {
+  CobroPendiente,
+  EmisorInstitucion,
+  EstadoFactura,
+  FacturaPreview,
+  ResumenLote,
+} from "../types/factura";
 import * as facturacionService from "../services/facturacion.service";
 import Sidebar from "../components/Sidebar";
 
@@ -20,6 +26,9 @@ const emisorInicial: EmisorInstitucion = {
 const Facturacion: React.FC<Props> = ({ userRole }) => {
   const token = localStorage.getItem("token");
   const institucionActual = localStorage.getItem("institucion") || "Institución";
+  // El backend filtra por NIT, no por nombre: dos colegios pueden
+  // llamarse parecido, el NIT es la llave real.
+  const institucionNit = localStorage.getItem("institucionNit") || "";
 
   const [periodo, setPeriodo] = useState<string>(() => {
     const now = new Date();
@@ -32,14 +41,19 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
   const [buscando, setBuscando] = useState(false);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
-  // Errores reales de conexión con el backend (se muestran siempre,
-  // incluso en MODO_PRUEBA_SIN_BACKEND, para poder detectar problemas
-  // de configuración — CORS, URL mal escrita, token vencido, etc.)
+  // Errores reales de conexión con el backend, para poder detectar
+  // problemas de configuración — CORS, URL mal escrita, token vencido.
   const [errorEmisor, setErrorEmisor] = useState<string | null>(null);
   const [errorCobros, setErrorCobros] = useState<string | null>(null);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
   // Vista previa
+  // Modo en que opera la facturación ("simulado" mientras no haya
+  // credenciales de Siigo, "real" cuando las haya). Lo decide el backend.
+  const [modoSiigo, setModoSiigo] = useState<string>("simulado");
+  const [avisosConfiguracion, setAvisosConfiguracion] = useState<string[]>([]);
+  const [resumenLote, setResumenLote] = useState<ResumenLote | null>(null);
+
   const [facturasPreview, setFacturasPreview] = useState<FacturaPreview[]>([]);
   const [indicePreview, setIndicePreview] = useState(0);
   const [mostrarPreview, setMostrarPreview] = useState(false);
@@ -70,8 +84,10 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     setSeleccionados(new Set());
     setErrorCobros(null);
     try {
-      const data = await facturacionService.obtenerCobros(token, institucionActual, periodo);
-      setCobros(data);
+      const data = await facturacionService.obtenerCobros(token, institucionNit, periodo);
+      setCobros(data.cobros);
+      setModoSiigo(data.modo);
+      setAvisosConfiguracion(data.advertenciasConfiguracion);
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : "Error desconocido";
       setCobros([]);
@@ -175,7 +191,10 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     setEnviando(true);
     setErrorEnvio(null);
     try {
-      const resultado = await facturacionService.enviarFactura(token, factura);
+      // Se envía el id del cobro y el periodo: el payload que exige Siigo
+      // lo arma el backend, que es quien conoce los ids de comprobante,
+      // vendedor y medio de pago de la cuenta de Solver Control.
+      const resultado = await facturacionService.enviarFactura(token, factura.cobroId, periodo);
       actualizarResultadoFactura(factura.cobroId, resultado);
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : "Error desconocido";
@@ -187,13 +206,23 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
 
   const actualizarResultadoFactura = (
     cobroId: number,
-    resultado: { estado: EstadoFactura; cufe?: string; motivoRechazo?: string }
+    resultado: { estado: EstadoFactura; numeroFactura?: string; cufe?: string; motivoRechazo?: string }
   ) => {
     setCobros((prev) =>
       prev.map((c) => (c.id === cobroId ? { ...c, ...resultado } : c))
     );
     setFacturasPreview((prev) =>
-      prev.map((f) => (f.cobroId === cobroId ? { ...f, ...resultado } : f))
+      prev.map((f) =>
+        f.cobroId === cobroId
+          ? {
+              ...f,
+              ...resultado,
+              // Si el backend no devolvió número (p. ej. factura
+              // rechazada), se conserva el que ya tenía la vista previa.
+              numeroFactura: resultado.numeroFactura ?? f.numeroFactura,
+            }
+          : f
+      )
     );
   };
 
@@ -202,12 +231,40 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     if (factura) enviarFactura(factura);
   };
 
+  // Emisión en lote: una sola llamada al backend, que envía factura por
+  // factura y NO se detiene cuando Siigo rechaza alguna. Al final llega
+  // el resumen con el detalle de cada una.
   const handleEnviarTodas = async () => {
-    for (const factura of facturasPreview) {
-      if (factura.estado === "Generada") {
-        // eslint-disable-next-line no-await-in-loop
-        await enviarFactura(factura);
-      }
+    const pendientes = facturasPreview.filter((f) => f.estado === "Generada");
+    if (pendientes.length === 0) return;
+
+    setEnviando(true);
+    setErrorEnvio(null);
+    setResumenLote(null);
+
+    try {
+      const resumen = await facturacionService.emitirLote(
+        token,
+        institucionNit,
+        periodo,
+        pendientes.map((f) => f.cobroId)
+      );
+
+      setResumenLote(resumen);
+
+      resumen.detalle.forEach((fila) => {
+        actualizarResultadoFactura(fila.facturaId, {
+          estado: fila.estado as EstadoFactura,
+          numeroFactura: fila.numeroFactura || undefined,
+          cufe: fila.cufe || undefined,
+          motivoRechazo: fila.motivo || undefined,
+        });
+      });
+    } catch (error) {
+      const mensaje = error instanceof Error ? error.message : "Error desconocido";
+      setErrorEnvio(`No se pudo emitir el lote: ${mensaje}`);
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -230,6 +287,8 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     }
   };
 
+  const formatearPeriodo = (p: string) => facturacionService.formatearPeriodoLegible(p);
+
   const formatoCOP = (valor: number) =>
     valor.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
 
@@ -246,14 +305,43 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
           <p>Genera y envía las facturas electrónicas del periodo a Siigo</p>
         </header>
 
-        {/* TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND (ver services/facturacion.service.ts) */}
-        {facturacionService.MODO_PRUEBA_SIN_BACKEND && (
+        {modoSiigo === "simulado" && (
           <p className="fac-aviso-demo">
-            🧪 Modo prueba activo — usando datos simulados mientras el backend de{" "}
-            <code>/api/facturacion</code> no esté conectado. Recuerda desactivar{" "}
-            <code>MODO_PRUEBA_SIN_BACKEND</code> en <code>facturacion.service.ts</code> antes de
-            entregar.
+            🧪 Facturación en modo simulado — las facturas se validan con las mismas reglas de
+            Siigo pero no se envían a la DIAN. Para emitir de verdad, configurar las credenciales
+            y poner <code>solvia.siigo.modo=real</code> en el backend.
           </p>
+        )}
+
+        {avisosConfiguracion.length > 0 && (
+          <div className="fac-aviso-error">
+            ⚠️ Falta configurar en el backend antes de facturar en real:
+            <ul>
+              {avisosConfiguracion.map((aviso) => (
+                <li key={aviso}>{aviso}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {resumenLote && (
+          <div className="fac-aviso-demo">
+            📋 Lote de {formatearPeriodo(resumenLote.periodo)} — {resumenLote.total} factura(s):{" "}
+            {resumenLote.aceptadas} aceptada(s) por la DIAN, {resumenLote.enviadas} enviada(s) a la
+            espera de validación, {resumenLote.rechazadas} rechazada(s)
+            {resumenLote.omitidas > 0 && `, ${resumenLote.omitidas} omitida(s) por estar ya aceptadas`}.
+            {resumenLote.rechazadas > 0 && (
+              <ul>
+                {resumenLote.detalle
+                  .filter((f) => f.estado === "Rechazada")
+                  .map((f) => (
+                    <li key={f.facturaId}>
+                      {f.estudiante || f.acudiente}: {f.motivo}
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </div>
         )}
 
         {errorEmisor && (

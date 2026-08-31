@@ -6,16 +6,11 @@
 
 export const BASE_URL = "http://localhost:8080";
 
-// ═══════════════════════════════════════════════════════════════════
-// 🧪 MODO PRUEBA SIN BACKEND
-// ═══════════════════════════════════════════════════════════════════
-// Mientras esté en `true`, los servicios usan datos de ejemplo y
-// simulan respuestas cuando el backend real falla o no existe todavía,
-// para poder probar el front de forma independiente.
+// Ya no existe un modo de prueba en el front: todos los endpoints están
+// conectados (facturación, historial de cargas y reportes) y no queda
+// ningún dato de ejemplo.
 //
-// TODO ELIMINAR: cuando TODOS los endpoints reales estén conectados y
-// verificados, cambiar esto a `false`. Cada servicio que use este flag
-// tiene marcado con "TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND"
-// el bloque de datos de ejemplo que se puede borrar en ese momento.
-// ═══════════════════════════════════════════════════════════════════
-export const MODO_PRUEBA_SIN_BACKEND = true;
+// La simulación que hacía falta se movió al backend
+// (SiigoSimuladorClient), donde aplica las validaciones reales de Siigo
+// en lugar de inventar rechazos al azar. Se controla con la propiedad
+// solvia.siigo.modo en application.properties.

@@ -334,6 +334,7 @@ type Props = {
 
 const HistorialCargas: React.FC<Props> = ({ userRole }) => {
   const token = localStorage.getItem("token");
+  const institucionNit = localStorage.getItem("institucionNit") || "";
 
   const [cargas, setCargas] = useState<CargaHistorial[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -353,7 +354,7 @@ const HistorialCargas: React.FC<Props> = ({ userRole }) => {
     setCargando(true);
     setErrorHistorial(null);
     try {
-      const data = await historialCargasService.obtenerHistorial(token);
+      const data = await historialCargasService.obtenerHistorial(token, institucionNit);
       setCargas(data);
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : "Error desconocido";
@@ -407,16 +408,6 @@ const HistorialCargas: React.FC<Props> = ({ userRole }) => {
           <h1>Historial de Cargas</h1>
           <p>Auditoría de los archivos cargados al sistema</p>
         </header>
-
-        {/* TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND (ver services/config.ts) */}
-        {historialCargasService.MODO_PRUEBA_SIN_BACKEND && (
-          <p className="hc-aviso-demo">
-            🧪 Modo prueba activo — usando datos simulados mientras el backend de{" "}
-            <code>/api/cargas/historial</code> no esté conectado. Recuerda desactivar{" "}
-            <code>MODO_PRUEBA_SIN_BACKEND</code> en <code>services/config.ts</code> antes de
-            entregar.
-          </p>
-        )}
 
         {errorHistorial && (
           <p className="hc-aviso-error">

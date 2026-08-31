@@ -1,78 +1,38 @@
-import type { CobroPendiente, EmisorInstitucion, FacturaPreview, RespuestaEnvioFactura } from "../types/factura";
-import { BASE_URL, MODO_PRUEBA_SIN_BACKEND } from "./config";
+import type {
+  CobroPendiente,
+  EmisorInstitucion,
+  ResumenLote,
+  RespuestaEnvioFactura,
+} from "../types/factura";
+import { BASE_URL } from "./config";
 
-export { MODO_PRUEBA_SIN_BACKEND };
+// ── EMISOR (datos del colegio activo) ────────────────────────────────
+// Reutiliza el mismo endpoint que ya usa SeleccionInstitucion.tsx.
+export const obtenerEmisor = async (
+  token: string | null,
+  institucionActual: string
+): Promise<EmisorInstitucion> => {
+  const response = await fetch(`${BASE_URL}/api/colegios/get`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
 
-// ── DATOS DE EJEMPLO (solo para MODO_PRUEBA_SIN_BACKEND) ────────────
-const cobrosEjemplo = (periodo: string): CobroPendiente[] => [
-  {
-    id: 1,
-    documentoEstudiante: "1019876543",
-    nombreEstudiante: "Juan Esteban Rodríguez",
-    grado: "5°A",
-    nombreAcudiente: "María Fernanda Rodríguez",
-    documentoAcudiente: "52.334.221",
-    telefonoAcudiente: "601 445 2231",
-    direccionAcudiente: "Cra 45 #12-34, Bogotá",
-    concepto: `Pensión ${periodo}`,
-    valor: 420000,
-    estado: "Pendiente",
-  },
-  {
-    id: 2,
-    documentoEstudiante: "1019876544",
-    nombreEstudiante: "Valeria Gómez Torres",
-    grado: "3°B",
-    nombreAcudiente: "Carlos Gómez Peña",
-    documentoAcudiente: "79.112.445",
-    telefonoAcudiente: "601 778 9021",
-    direccionAcudiente: "Calle 80 #34-10, Bogotá",
-    concepto: `Pensión ${periodo}`,
-    valor: 380000,
-    estado: "Pendiente",
-  },
-  {
-    id: 3,
-    documentoEstudiante: "1019876545",
-    nombreEstudiante: "Samuel Alexander Díaz",
-    grado: "1°A",
-    nombreAcudiente: "Diana Marcela Díaz",
-    documentoAcudiente: "1.032.556.789",
-    telefonoAcudiente: "601 220 4456",
-    direccionAcudiente: "Av. Cota #5-20, Cota",
-    concepto: `Pensión ${periodo}`,
-    valor: 350000,
-    estado: "Pendiente",
-  },
-  {
-    id: 4,
-    documentoEstudiante: "1019876546",
-    nombreEstudiante: "Isabella Martínez Cruz",
-    grado: "5°A",
-    nombreAcudiente: "Andrés Martínez Ospina",
-    documentoAcudiente: "80.221.334",
-    telefonoAcudiente: "601 990 1122",
-    direccionAcudiente: "Cra 15 #90-40, Bogotá",
-    concepto: `Pensión ${periodo}`,
-    valor: 420000,
-    estado: "Pendiente",
-  },
-];
+  const data: { nombre: string; nit: string; direccion: string; telefono: string }[] =
+    await response.json();
 
-const emisorEjemplo: EmisorInstitucion = {
-  nombre: "Institución educativa",
-  nit: "900.111.222-3",
-  direccion: "Calle 10 #20-30, Cota",
-  telefono: "601 333 4444",
-  resolucionDian: "Configurada en Siigo",
+  const colegio = data.find((c) => c.nombre === institucionActual);
+  if (!colegio) throw new Error(`No se encontró la institución "${institucionActual}"`);
+
+  return {
+    nombre: colegio.nombre,
+    nit: colegio.nit,
+    direccion: colegio.direccion,
+    telefono: colegio.telefono,
+    // La resolución de facturación electrónica se configura una sola vez
+    // dentro de la cuenta Siigo del colegio; no viaja por cada factura.
+    resolucionDian: "Configurada en Siigo",
+  };
 };
-
-const generarCufeSimulado = () =>
-  Array.from({ length: 4 })
-    .map(() => Math.random().toString(36).substring(2, 10))
-    .join("")
-    .toUpperCase()
-    .slice(0, 40);
 
 export const formatearPeriodoLegible = (p: string) => {
   const [anio, mes] = p.split("-");
@@ -83,87 +43,104 @@ export const formatearPeriodoLegible = (p: string) => {
   return `${meses[parseInt(mes, 10) - 1]} ${anio}`;
 };
 
-// ── EMISOR (datos del colegio activo) ────────────────────────────────
-// Reutiliza el mismo endpoint que ya usa SeleccionInstitucion.tsx.
-// Lanza un error si falla y MODO_PRUEBA_SIN_BACKEND está en false,
-// para que el componente pueda mostrar un mensaje real en pantalla.
-export const obtenerEmisor = async (
-  token: string | null,
-  institucionActual: string
-): Promise<EmisorInstitucion> => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/colegios/get`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
-    const data: { nombre: string; nit: string; direccion: string; telefono: string }[] =
-      await response.json();
-    const colegio = data.find((c) => c.nombre === institucionActual);
-    if (!colegio) throw new Error(`No se encontró la institución "${institucionActual}"`);
-    return {
-      nombre: colegio.nombre,
-      nit: colegio.nit,
-      direccion: colegio.direccion,
-      telefono: colegio.telefono,
-      resolucionDian: "Configurada en Siigo",
-    };
-  } catch (error) {
-    console.error("Error al obtener el colegio activo:", error);
-    // TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND
-    if (MODO_PRUEBA_SIN_BACKEND) return emisorEjemplo;
-    throw error;
-  }
+// ── MODO DE OPERACIÓN ────────────────────────────────────────────────
+// "simulado" mientras no haya credenciales de Siigo, "real" cuando las
+// haya. Lo decide el backend por configuración; el front solo lo muestra.
+export const obtenerModoSiigo = async (token: string | null): Promise<string> => {
+  const response = await fetch(`${BASE_URL}/api/facturacion/estado`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
+  const data = await response.json();
+  return data.modo as string;
 };
 
-// ── COBROS PENDIENTES DEL PERIODO ────────────────────────────────────
+// ── PASO 1: PREVISUALIZAR LOS COBROS DEL PERIODO ────────────────────
+// Devuelve además, por cobro, las advertencias de lo que Siigo va a
+// rechazar (acudiente sin dirección, sin identificación, etc.), para
+// verlas ANTES de emitir y no después del rechazo de la DIAN.
 export const obtenerCobros = async (
   token: string | null,
-  institucionActual: string,
+  colegioNit: string,
   periodo: string
-): Promise<CobroPendiente[]> => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/api/facturacion/pendientes?institucion=${encodeURIComponent(
-        institucionActual
-      )}&periodo=${periodo}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
-    return (await response.json()) as CobroPendiente[];
-  } catch (error) {
-    console.error("Error al obtener cobros pendientes:", error);
-    // TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND
-    if (MODO_PRUEBA_SIN_BACKEND) return cobrosEjemplo(formatearPeriodoLegible(periodo));
-    throw error;
+): Promise<{ cobros: CobroPendiente[]; modo: string; advertenciasConfiguracion: string[] }> => {
+  const response = await fetch(
+    `${BASE_URL}/api/facturacion/pendientes?colegioNit=${encodeURIComponent(
+      colegioNit
+    )}&periodo=${periodo}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? `El backend respondió ${response.status}`);
   }
+
+  const data = await response.json();
+  return {
+    cobros: (data.cobros ?? []) as CobroPendiente[],
+    modo: data.modo ?? "simulado",
+    advertenciasConfiguracion: data.advertenciasConfiguracion ?? [],
+  };
 };
 
-// ── ENVÍO AL BACKEND (que a su vez habla con Siigo/DIAN) ────────────
+// ── PASO 2: EMITIR EL LOTE ──────────────────────────────────────────
+// El envío ocurre en el backend, factura por factura. Si Siigo rechaza
+// alguna, se registra el motivo y se continúa con las demás; al final
+// llega el resumen completo. Un lote de mil facturas no puede detenerse
+// en la número 40 porque un acudiente no tenía dirección.
+export const emitirLote = async (
+  token: string | null,
+  colegioNit: string,
+  periodo: string,
+  facturaIds: number[]
+): Promise<ResumenLote> => {
+  const response = await fetch(`${BASE_URL}/api/facturacion/emitir-lote`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ colegioNit, periodo, facturaIds }),
+  });
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? `El backend respondió ${response.status}`);
+  }
+
+  return (await response.json()) as ResumenLote;
+};
+
+// ── Envío individual ────────────────────────────────────────────────
+// Mismo camino que el lote, con una sola factura. Devuelve el estado ya
+// resuelto por el backend (Aceptada / Enviada / Rechazada).
 export const enviarFactura = async (
   token: string | null,
-  factura: FacturaPreview
+  facturaId: number,
+  periodo: string
 ): Promise<RespuestaEnvioFactura> => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/facturacion/enviar`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(factura),
-    });
-    if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
-    return (await response.json()) as RespuestaEnvioFactura;
-  } catch (error) {
-    console.error("Error al enviar la factura al backend:", error);
-    // TODO ELIMINAR junto con MODO_PRUEBA_SIN_BACKEND
-    if (MODO_PRUEBA_SIN_BACKEND) {
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      const aceptada = Math.random() > 0.15;
-      return aceptada
-        ? { estado: "Aceptada", cufe: generarCufeSimulado() }
-        : { estado: "Rechazada", motivoRechazo: "Datos del adquiriente incompletos (simulado)" };
-    }
-    throw error;
+  const response = await fetch(`${BASE_URL}/api/facturacion/enviar`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ facturaId, periodo }),
+  });
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? `El backend respondió ${response.status}`);
   }
+
+  const resumen = (await response.json()) as ResumenLote;
+  const fila = resumen.detalle[0];
+
+  return {
+    estado: (fila?.estado ?? "Rechazada") as RespuestaEnvioFactura["estado"],
+    numeroFactura: fila?.numeroFactura || undefined,
+    cufe: fila?.cufe || undefined,
+    motivoRechazo: fila?.motivo || undefined,
+  };
 };
