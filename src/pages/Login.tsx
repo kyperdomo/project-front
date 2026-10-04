@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
+import { BASE_URL } from "../services/config";
 
 type UserRole = "Administrador" | "Auxiliar";
 
@@ -21,7 +22,7 @@ const Login = ({ setIsAuth, setUserRole, setUserName }: Props) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/api/usuarios/login", {
+      const response = await fetch(`${BASE_URL}/api/usuarios/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

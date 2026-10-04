@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import "../styles/Dashboard.css";
 import "../styles/Reportes.css";
 import Sidebar from "../components/Sidebar";
+import { BASE_URL } from "../services/config";
 
 type Props = {
   userRole: "Administrador" | "Auxiliar";
@@ -55,7 +56,6 @@ const tiposReporte = [
   },
 ];
 
-const BASE_URL = "http://localhost:8080";
 
 const Reportes: React.FC<Props> = ({ userRole }) => {
   const institucionActual = localStorage.getItem("institucion") || "Institución";

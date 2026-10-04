@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/SeleccionInstitucion.css";
+import { BASE_URL } from "../services/config";
 
 export type Institucion = string;
 
@@ -11,7 +12,22 @@ type InstitucionData = {
   nit: string;
   direccion: string;
   telefono: string;
+  // ── Credenciales de Siigo de ESTA institución ──────────────────────
+  // En Siigo Nube cada colegio es una cuenta aparte, con su propia
+  // credencial, su resolución DIAN y su numeración. Solver Control las
+  // administra todas, pero factura a nombre de cada institución, así que
+  // estos datos son por colegio y no configuración de la aplicación.
+  siigoUsername: string;
+  // El backend nunca la devuelve: al editar llega vacía y solo se
+  // reemplaza si se escribe una nueva.
+  siigoAccessKey: string;
+  siigoDocumentId: string;
+  siigoSellerId: string;
+  siigoPaymentTypeId: string;
 };
+
+// Campos que el backend recibe como número.
+const CAMPOS_NUMERICOS = ["siigoDocumentId", "siigoSellerId", "siigoPaymentTypeId"] as const;
 
 type Props = {
   userName: string;
@@ -34,6 +50,11 @@ const camposVacios: InstitucionData = {
   nit: "",
   direccion: "",
   telefono: "",
+  siigoUsername: "",
+  siigoAccessKey: "",
+  siigoDocumentId: "",
+  siigoSellerId: "",
+  siigoPaymentTypeId: "",
 };
 
 const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstitucion }) => {
@@ -53,7 +74,7 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
 
   const obtenerInstituciones = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/colegios/get", 
+      const response = await fetch(`${BASE_URL}/api/colegios/get`, 
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -122,15 +143,24 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
 
     try {
 
+      // Los ids de Siigo viajan como número; si el campo quedó vacío se
+      // manda null en vez de "", que el backend no puede convertir.
+      const cuerpo: Record<string, unknown> = { ...form };
+      CAMPOS_NUMERICOS.forEach((campo) => {
+        const valor = form[campo].trim();
+        cuerpo[campo] = valor === "" ? null : Number(valor);
+      });
+      if (!form.siigoAccessKey.trim()) delete cuerpo.siigoAccessKey;
+
       const response = await fetch(
-        "http://localhost:8080/api/colegios/create",
+        `${BASE_URL}/api/colegios/create`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(cuerpo),
         }
       );
 
@@ -231,6 +261,40 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
                     placeholder={placeholder}
                   />
                   {errores[name] && <span className="si-error-msg">{errores[name]}</span>}
+                </div>
+              ))}
+
+              <div className="si-campo">
+                <p className="si-label" style={{ marginTop: "1rem" }}>
+                  Facturación electrónica (Siigo)
+                </p>
+                <span className="si-error-msg" style={{ color: "#6b7280" }}>
+                  Se toman de la cuenta de Siigo de esta institución: Alianzas →
+                  Mi Credencial API. Se pueden dejar en blanco y cargarlas después,
+                  pero sin ellas no se puede facturar este colegio.
+                </span>
+              </div>
+
+              {(
+                [
+                  { name: "siigoUsername", label: "Usuario de API", placeholder: "correo@colegio.edu.co" },
+                  { name: "siigoAccessKey", label: "Clave de API", placeholder: "Se guarda cifrada" },
+                  { name: "siigoDocumentId", label: "ID tipo de comprobante", placeholder: "GET /document-types" },
+                  { name: "siigoSellerId", label: "ID del vendedor", placeholder: "GET /users" },
+                  { name: "siigoPaymentTypeId", label: "ID del medio de pago", placeholder: "GET /payment-types" },
+                ] as { name: keyof InstitucionData; label: string; placeholder: string }[]
+              ).map(({ name, label, placeholder }) => (
+                <div className="si-campo" key={name}>
+                  <label className="si-label">{label}</label>
+                  <input
+                    className="si-input"
+                    // La clave nunca se muestra en pantalla mientras se escribe.
+                    type={name === "siigoAccessKey" ? "password" : "text"}
+                    name={name}
+                    value={form[name]}
+                    onChange={handleCampo}
+                    placeholder={placeholder}
+                  />
                 </div>
               ))}
             </div>

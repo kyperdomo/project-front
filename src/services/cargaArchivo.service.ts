@@ -152,3 +152,139 @@ export const reentrenarModelo = async (
 
   return await response.json();
 };
+
+// ── CARGA DESDE DOS ARCHIVOS SEPARADOS ──────────────────────────────
+// Para los colegios que mandan un Excel con los estudiantes y otro con
+// los acudientes. NO hay que indicar cuál es la llave: el backend prueba
+// las columnas candidatas de ambos archivos y se queda con la que
+// produce más coincidencias reales, normalizando las identificaciones
+// (puntos, guiones, ceros a la izquierda). Funciona igual si el colegio
+// los relaciona por el documento del niño o por la cédula del acudiente.
+
+export type CruceDeArchivos = {
+  filas: FilaCarga[];
+  llaveDetectada: {
+    student_column: string;
+    guardian_column: string;
+    match_rate: number;
+  } | null;
+  totalEstudiantes: number;
+  totalAcudientes: number;
+  cruzados: number;
+  estudiantesSinAcudiente: number;
+  acudientesSinEstudiante: number;
+  identificacionesDuplicadasEstudiantes: number;
+  identificacionesDuplicadasAcudientes: number;
+};
+
+export const previsualizarDosArchivos = async (
+  token: string | null,
+  archivoEstudiantes: File,
+  archivoAcudientes: File,
+  colegioNit: string
+): Promise<CruceDeArchivos> => {
+  const formData = new FormData();
+  formData.append("archivoEstudiantes", archivoEstudiantes);
+  formData.append("archivoAcudientes", archivoAcudientes);
+  formData.append("colegioNit", colegioNit);
+
+  const response = await fetch(`${BASE_URL}/api/cargas/preview-dos-archivos`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? "No se pudieron cruzar los dos archivos");
+  }
+
+  return (await response.json()) as CruceDeArchivos;
+};
+
+// Guarda las filas ya revisadas. Los datos ya vienen cruzados, así que
+// no hay que volver a subir los Excel.
+export const confirmarFilas = async (
+  token: string | null,
+  filas: FilaCarga[],
+  colegioNit: string,
+  nombreArchivo: string
+): Promise<ResultadoCarga> => {
+  const response = await fetch(`${BASE_URL}/api/cargas/confirmar-filas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      colegioNit,
+      nombreArchivo,
+      // Solo se mandan las filas que se pueden guardar: las huérfanas se
+      // quedan en pantalla para que la usuaria las corrija primero.
+      filas: filas.filter((f) => f.estado !== "ERROR").map(filaACampos),
+    }),
+  });
+
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? "No se pudieron guardar las filas");
+  }
+
+  return (await response.json()) as ResultadoCarga;
+};
+
+// ── REGISTROS PENDIENTES DE CORRECCIÓN ──────────────────────────────
+// Las filas que no se pudieron guardar quedan almacenadas en el backend.
+// Antes vivían solo en la pantalla: al cerrarla se perdían, y como el
+// colegio tarda días en mandar la corrección, tocaba volver a cargar
+// todo el archivo. Ahora se retoman cuando la institución responda.
+
+export type FilaPendiente = FilaCarga & {
+  pendienteId: number;
+  origenArchivo: string;
+};
+
+export const obtenerPendientes = async (
+  token: string | null,
+  colegioNit: string
+): Promise<FilaPendiente[]> => {
+  const response = await fetch(
+    `${BASE_URL}/api/cargas/pendientes?colegioNit=${encodeURIComponent(colegioNit)}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!response.ok) throw new Error("No se pudieron cargar los registros pendientes");
+  return (await response.json()) as FilaPendiente[];
+};
+
+export const resolverPendiente = async (
+  token: string | null,
+  pendienteId: number,
+  fila: FilaCarga,
+  colegioNit: string
+): Promise<FilaCarga> => {
+  const response = await fetch(`${BASE_URL}/api/cargas/pendientes/${pendienteId}/resolver`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ colegioNit, campos: filaACampos(fila) }),
+  });
+  if (!response.ok) {
+    const detalle = await response.json().catch(() => null);
+    throw new Error(detalle?.error ?? "No se pudo guardar la corrección");
+  }
+  return (await response.json()) as FilaCarga;
+};
+
+// Para estudiantes que ya no aplican (se retiraron del colegio).
+export const descartarPendiente = async (
+  token: string | null,
+  pendienteId: number
+): Promise<void> => {
+  const response = await fetch(`${BASE_URL}/api/cargas/pendientes/${pendienteId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("No se pudo descartar el registro");
+};

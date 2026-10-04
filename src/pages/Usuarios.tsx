@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 import "../styles/Usuarios.css";
 import Sidebar from "../components/Sidebar";
+import { BASE_URL } from "../services/config";
 
 type Props = {
   userRole: "Administrador" | "Auxiliar";
@@ -28,7 +29,7 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/usuarios/get', {
+        const response = await fetch(`${BASE_URL}/api/usuarios/get`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -54,7 +55,7 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
   // 🔥 TOGGLE ESTADO (USA TU ENDPOINT)
   const handleToggleEstado = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/estado/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/usuarios/estado/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`
@@ -94,7 +95,7 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/delete/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/usuarios/delete/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -120,8 +121,8 @@ const Usuarios: React.FC<Props> = ({ userRole }) => {
 
     try {
       const url = isEditing
-        ? `http://localhost:8080/api/usuarios/update/${currentUser.id}`
-        : `http://localhost:8080/api/usuarios/create`;
+        ? `${BASE_URL}/api/usuarios/update/${currentUser.id}`
+        : `${BASE_URL}/api/usuarios/create`;
 
       const method = isEditing ? "PUT" : "POST";
 
