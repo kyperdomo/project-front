@@ -18,6 +18,10 @@ export type CobroPendiente = {
   // Advertencias calculadas por el backend: lo que Siigo va a rechazar
   // de este cobro concreto, visible antes de emitir.
   advertencias?: string[];
+  // Si el acudiente ya existe en la cuenta Siigo del colegio. Existente:
+  // solo se envía su cédula y Siigo usa los datos que ya tiene. Nuevo:
+  // Siigo lo crea con los datos del Excel, así que deben estar completos.
+  clienteSiigo?: "Existente" | "Nuevo" | "Sin verificar";
   correoAcudiente?: string;
   documentoEstudiante: string;
   nombreEstudiante: string;
