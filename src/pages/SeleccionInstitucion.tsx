@@ -24,7 +24,30 @@ type InstitucionData = {
   siigoDocumentId: string;
   siigoSellerId: string;
   siigoPaymentTypeId: string;
+  // Código (no id) del servicio de pensión creado en la cuenta Siigo.
+  siigoProductCode: string;
 };
+
+// Lo que devuelve POST /api/colegios/siigo/catalogos.
+type OpcionSiigo = { id: string; nombre: string; detalle: string };
+type CatalogosSiigo = {
+  tiposComprobante: OpcionSiigo[];
+  vendedores: OpcionSiigo[];
+  mediosPago: OpcionSiigo[];
+  productos: OpcionSiigo[];
+};
+
+// Campo del formulario -> catálogo de Siigo que lo llena.
+const CAMPOS_CATALOGO: {
+  name: "siigoDocumentId" | "siigoSellerId" | "siigoPaymentTypeId" | "siigoProductCode";
+  label: string;
+  catalogo: keyof CatalogosSiigo;
+}[] = [
+  { name: "siigoDocumentId", label: "Tipo de comprobante (factura de venta)", catalogo: "tiposComprobante" },
+  { name: "siigoSellerId", label: "Vendedor", catalogo: "vendedores" },
+  { name: "siigoPaymentTypeId", label: "Medio de pago", catalogo: "mediosPago" },
+  { name: "siigoProductCode", label: "Producto / servicio de pensión", catalogo: "productos" },
+];
 
 // Campos que el backend recibe como número.
 const CAMPOS_NUMERICOS = ["siigoDocumentId", "siigoSellerId", "siigoPaymentTypeId"] as const;
@@ -55,6 +78,7 @@ const camposVacios: InstitucionData = {
   siigoDocumentId: "",
   siigoSellerId: "",
   siigoPaymentTypeId: "",
+  siigoProductCode: "",
 };
 
 const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstitucion }) => {
@@ -67,6 +91,11 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
   const [mostrarModal, setMostrarModal] = useState(false);
   const [form, setForm] = useState<InstitucionData>(camposVacios);
   const [errores, setErrores] = useState<Partial<InstitucionData>>({});
+
+  // Catálogos traídos de la cuenta Siigo del colegio.
+  const [catalogos, setCatalogos] = useState<CatalogosSiigo | null>(null);
+  const [cargandoCatalogos, setCargandoCatalogos] = useState(false);
+  const [errorCatalogos, setErrorCatalogos] = useState("");
 
   useEffect(() => {
     obtenerInstituciones();
@@ -122,10 +151,66 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
     navigate("/dashboard");
   };
 
-  const handleCampo = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCampo = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrores((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  // Con el usuario y la clave escritos, pide a Siigo (vía backend) los
+  // comprobantes, vendedores, medios de pago y productos de esa cuenta.
+  const cargarCatalogos = async () => {
+    setErrorCatalogos("");
+    if (!form.siigoUsername.trim() || !form.siigoAccessKey.trim()) {
+      setErrorCatalogos("Escribe primero el usuario y la clave de API.");
+      return;
+    }
+
+    setCargandoCatalogos(true);
+    try {
+      const response = await fetch(`${BASE_URL}/api/colegios/siigo/catalogos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: form.siigoUsername.trim(),
+          accessKey: form.siigoAccessKey.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        let mensaje = `Error ${response.status}`;
+        try {
+          const err = await response.json();
+          mensaje = err.detalle ? `${err.mensaje} — ${err.detalle}` : err.mensaje ?? mensaje;
+        } catch {
+          /* respuesta sin JSON */
+        }
+        setErrorCatalogos(mensaje);
+        return;
+      }
+
+      const data: CatalogosSiigo = await response.json();
+      setCatalogos(data);
+
+      // Si un catálogo trae una sola opción, se deja seleccionada.
+      setForm((prev) => {
+        const siguiente = { ...prev };
+        CAMPOS_CATALOGO.forEach(({ name, catalogo }) => {
+          if (!siguiente[name] && data[catalogo].length === 1) {
+            siguiente[name] = data[catalogo][0].id;
+          }
+        });
+        return siguiente;
+      });
+    } catch (error) {
+      console.error(error);
+      setErrorCatalogos("No se pudo conectar con el servidor.");
+    } finally {
+      setCargandoCatalogos(false);
+    }
   };
 
   const validar = (): boolean => {
@@ -151,6 +236,7 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
         cuerpo[campo] = valor === "" ? null : Number(valor);
       });
       if (!form.siigoAccessKey.trim()) delete cuerpo.siigoAccessKey;
+      if (!form.siigoProductCode.trim()) delete cuerpo.siigoProductCode;
 
       const response = await fetch(
         `${BASE_URL}/api/colegios/create`,
@@ -177,6 +263,7 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
 
       setForm(camposVacios);
       setErrores({});
+      setCatalogos(null);
       setMostrarModal(false);
 
     } catch (error) {
@@ -189,6 +276,8 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
     setMostrarModal(false);
     setForm(camposVacios);
     setErrores({});
+    setCatalogos(null);
+    setErrorCatalogos("");
   };
 
   return (
@@ -278,10 +367,7 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
               {(
                 [
                   { name: "siigoUsername", label: "Usuario de API", placeholder: "correo@colegio.edu.co" },
-                  { name: "siigoAccessKey", label: "Clave de API", placeholder: "Se guarda cifrada" },
-                  { name: "siigoDocumentId", label: "ID tipo de comprobante", placeholder: "GET /document-types" },
-                  { name: "siigoSellerId", label: "ID del vendedor", placeholder: "GET /users" },
-                  { name: "siigoPaymentTypeId", label: "ID del medio de pago", placeholder: "GET /payment-types" },
+                  { name: "siigoAccessKey", label: "Clave de API (access key)", placeholder: "Se guarda cifrada" },
                 ] as { name: keyof InstitucionData; label: string; placeholder: string }[]
               ).map(({ name, label, placeholder }) => (
                 <div className="si-campo" key={name}>
@@ -294,9 +380,60 @@ const SeleccionInstitucion: React.FC<Props> = ({ userName, userRole, setInstituc
                     value={form[name]}
                     onChange={handleCampo}
                     placeholder={placeholder}
+                    autoComplete="off"
                   />
                 </div>
               ))}
+
+              <div className="si-campo">
+                <button
+                  type="button"
+                  className="si-btn-agregar"
+                  onClick={cargarCatalogos}
+                  disabled={cargandoCatalogos}
+                >
+                  {cargandoCatalogos ? "Consultando Siigo..." : "🔄 Cargar datos desde Siigo"}
+                </button>
+                {errorCatalogos && <span className="si-error-msg">{errorCatalogos}</span>}
+              </div>
+
+              {CAMPOS_CATALOGO.map(({ name, label, catalogo }) => {
+                const opciones = catalogos?.[catalogo] ?? [];
+                return (
+                  <div className="si-campo" key={name}>
+                    <label className="si-label">{label}</label>
+                    {catalogos ? (
+                      <>
+                        <select className="si-input" name={name} value={form[name]} onChange={handleCampo}>
+                          <option value="">— Seleccionar —</option>
+                          {opciones.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.nombre}
+                              {o.detalle ? ` (${o.detalle})` : ""}
+                            </option>
+                          ))}
+                        </select>
+                        {opciones.length === 0 && (
+                          <span className="si-error-msg">
+                            {catalogo === "productos"
+                              ? "La cuenta no tiene productos. Crea el servicio de pensión en Siigo y vuelve a cargar."
+                              : "Siigo no devolvió opciones para este campo."}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <input
+                        className="si-input"
+                        type="text"
+                        name={name}
+                        value={form[name]}
+                        onChange={handleCampo}
+                        placeholder="Usa “Cargar datos desde Siigo”"
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             <div className="si-modal-footer">
