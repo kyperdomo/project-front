@@ -26,7 +26,7 @@
 .upload-icon {
   font-size: 3.5rem;
   /* Ajuste: Más espacio para que no sature el título */
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
   display: block;
 }
 
@@ -84,7 +84,7 @@
 
 /* Título de la tabla con alta visibilidad */
 .table-title {
-  color: #1e293b !important; 
+  color: #1e293b !important;
   font-size: 1.6rem;
   font-weight: 800;
   margin: 0;
@@ -185,7 +185,7 @@
     align-items: flex-start;
     gap: 15px;
   }
-  
+
   .upload-card {
     padding: 25px;
   }
@@ -196,20 +196,59 @@
    ========================================================================== */
 
 .upload-card {
-  background: linear-gradient(135deg, #eefaf3 0%, #ffffff 55%, #fff4e3 100%);
+  background: linear-gradient(
+    135deg,
+    #eefaf3 0%,
+    #ffffff 55%,
+    #fff4e3 100%
+  );
   border: 2px dashed #86d0a9;
   box-shadow: 0 10px 26px rgba(27, 67, 50, 0.09);
 }
+
 .upload-card:hover {
   border-color: #fb8c00;
-  background: linear-gradient(135deg, #e3f6ec 0%, #ffffff 55%, #ffeccc 100%);
+  background: linear-gradient(
+    135deg,
+    #e3f6ec 0%,
+    #ffffff 55%,
+    #ffeccc 100%
+  );
 }
-.upload-card h3 { color: #1b4332; }
-.btn-upload { background: linear-gradient(135deg, #2ba36d 0%, #1b7a52 100%); box-shadow: 0 10px 18px -4px rgba(31, 138, 91, 0.40); }
-.btn-upload:hover { background: linear-gradient(135deg, #259461 0%, #176f48 100%); }
-.table-title { color: #1b4332 !important; }
-.grade-tag { background: #ffefd6; color: #b45309; }
-.custom-table td input:focus { border-color: #1f8a5b; }
+
+.upload-card h3 {
+  color: #1b4332;
+}
+
+.btn-upload {
+  background: linear-gradient(
+    135deg,
+    #2ba36d 0%,
+    #1b7a52 100%
+  );
+  box-shadow: 0 10px 18px -4px rgba(31, 138, 91, 0.40);
+}
+
+.btn-upload:hover {
+  background: linear-gradient(
+    135deg,
+    #259461 0%,
+    #176f48 100%
+  );
+}
+
+.table-title {
+  color: #1b4332 !important;
+}
+
+.grade-tag {
+  background: #ffefd6;
+  color: #b45309;
+}
+
+.custom-table td input:focus {
+  border-color: #1f8a5b;
+}
 
 /* ==========================================================================
    ESTUDIANTES · modo "estudiantes y acudientes por separado" (solo estilos)
@@ -217,10 +256,19 @@
    ========================================================================== */
 
 /* Subtítulo de la página */
-.content-header p { color: #5f8f77; margin-top: 10px; font-size: 0.95rem; }
+.content-header p {
+  color: #5f8f77;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
 
 /* Botones <button class="btn-upload"> (los <label> ya se veían bien) */
-button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
+button.btn-upload {
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
 .btn-upload:disabled,
 .btn-save-all:disabled {
   opacity: 0.5;
@@ -241,14 +289,22 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   font-weight: 700;
   text-decoration: none !important;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
+
 .btn-secundario:hover:not(:disabled) {
   background: #ffe9cc !important;
   border-color: #fb8c00 !important;
   transform: translateY(-1px);
 }
-.btn-secundario:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secundario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* Panel con los dos selectores de archivo */
 .upload-card > div:not(.upload-icon) {
@@ -259,6 +315,7 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   margin: 0 auto 6px;
   box-shadow: 0 6px 16px rgba(27, 67, 50, 0.07);
 }
+
 .upload-card > div:not(.upload-icon) .file-info {
   margin: 0 0 6px !important;
   padding: 10px 14px;
@@ -269,6 +326,7 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   font-size: 0.85rem;
   line-height: 1.45;
 }
+
 .upload-card .si-label {
   display: block;
   margin: 16px 0 6px;
@@ -276,6 +334,7 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   font-size: 0.9rem;
   font-weight: 700;
 }
+
 .upload-card input[type="file"] {
   width: 100%;
   padding: 10px;
@@ -285,24 +344,37 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   color: #475569;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
+
 .upload-card input[type="file"]:hover:not(:disabled) {
   border-color: #fb8c00;
   background: #fff9ef;
 }
-.upload-card input[type="file"]:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.upload-card input[type="file"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .upload-card input[type="file"]::file-selector-button {
   margin-right: 12px;
   padding: 9px 18px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #2ba36d 0%, #1b7a52 100%);
+  background: linear-gradient(
+    135deg,
+    #2ba36d 0%,
+    #1b7a52 100%
+  );
   color: #ffffff;
   font-family: inherit;
   font-weight: 700;
   cursor: pointer;
 }
+
 .upload-card > div:not(.upload-icon) .btn-upload {
   display: block;
   width: 100%;
@@ -312,7 +384,12 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
 
 /* Resumen del cruce (pantalla de resultados) */
 .est-aviso-cruce {
-  background: linear-gradient(135deg, #eaf6ef 0%, #ffffff 60%, #fff4e3 100%) !important;
+  background: linear-gradient(
+    135deg,
+    #eaf6ef 0%,
+    #ffffff 60%,
+    #fff4e3 100%
+  ) !important;
   border: 1px solid #cfe5d8;
   border-left: 6px solid #1f8a5b;
   border-radius: 16px !important;
@@ -322,6 +399,7 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   color: #1b4332;
   box-shadow: 0 6px 16px rgba(27, 67, 50, 0.07);
 }
+
 .est-aviso-cruce strong {
   background: #d1fae5;
   color: #047857;
@@ -329,21 +407,96 @@ button.btn-upload { border: none; font-family: inherit; font-size: 1rem; }
   border-radius: 8px;
   font-weight: 700;
 }
-.est-aviso-cruce .btn-upload { margin-top: 14px !important; }
+
+.est-aviso-cruce .btn-upload {
+  margin-top: 14px !important;
+}
 
 /* Registros pendientes de corrección */
-.est-fila-error { background-color: #fef2f2; }
+.est-fila-error {
+  background-color: #fef2f2;
+}
+
 .btn-guardar-fila {
   padding: 6px 14px;
   font-size: 0.85rem;
   font-weight: 700;
   font-family: inherit;
   color: #ffffff;
-  background: linear-gradient(135deg, #2ba36d 0%, #1b7a52 100%);
+  background: linear-gradient(
+    135deg,
+    #2ba36d 0%,
+    #1b7a52 100%
+  );
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-.btn-guardar-fila:hover:not(:disabled) { transform: translateY(-1px); }
-.btn-guardar-fila:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-guardar-fila:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-guardar-fila:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================================
+   SELECTS / COMBO BOX
+   Corrección para que las opciones sean visibles al desplegar
+   ========================================================================== */
+
+/* Todos los combo box del módulo */
+select {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-color: #cbd5e1;
+}
+
+/* Opciones del combo box */
+select option {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
+
+/* Opción actualmente seleccionada */
+select option:checked {
+  background-color: #eaf6ef !important;
+  color: #1b4332 !important;
+}
+
+/* Combo box dentro de la tabla */
+.custom-table select {
+  padding: 8px 10px;
+  width: 100%;
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* Opciones de los combo box de la tabla */
+.custom-table select option {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
+
+/* Opción seleccionada dentro de la tabla */
+.custom-table select option:checked {
+  background-color: #eaf6ef !important;
+  color: #1b4332 !important;
+}
+
+/* Cuando el combo box tiene el foco */
+select:focus,
+.custom-table select:focus {
+  outline: none;
+  border-color: #1f8a5b !important;
+  box-shadow: 0 0 0 3px rgba(31, 138, 91, 0.12);
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
