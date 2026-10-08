@@ -56,7 +56,7 @@
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  min-height: calc(100svh / var(--z, 1));
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -109,3 +109,35 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ==========================================================================
+   TEMA COLORIDO · solo estilos (verde institucional + naranja de acento)
+   ========================================================================== */
+
+body {
+  background: linear-gradient(135deg, #e6f4ec 0%, #eef1fd 52%, #fff1de 100%) fixed;
+}
+
+/* ==========================================================================
+   ESCALADO RESPONSIVO · la interfaz se reduce en pantallas pequeñas o con
+   escalado de Windows (125%/150%), para que se vea completa sin bajar el zoom.
+   Se calcula según el ANCHO (--zw) y el ALTO (--zh) de la ventana y se usa el
+   menor. Los vh/vw del resto de CSS se dividen por --z para seguir ocupando
+   toda la pantalla.
+   ========================================================================== */
+:root { --zw: 1; --zh: 1; --z: min(var(--zw), var(--zh)); }
+
+@media (max-width: 1780px) { :root { --zw: 0.9; } }
+@media (max-width: 1600px) { :root { --zw: 0.85; } }
+@media (max-width: 1450px) { :root { --zw: 0.75; } }
+@media (max-width: 1300px) { :root { --zw: 0.67; } }
+
+@media (max-height: 940px) { :root { --zh: 0.9; } }
+@media (max-height: 860px) { :root { --zh: 0.85; } }
+@media (max-height: 790px) { :root { --zh: 0.8; } }
+@media (max-height: 750px) { :root { --zh: 0.75; } }
+@media (max-height: 700px) { :root { --zh: 0.7; } }
+@media (max-height: 660px) { :root { --zh: 0.67; } }
+@media (max-height: 620px) { :root { --zh: 0.62; } }
+
+html { zoom: var(--z); }

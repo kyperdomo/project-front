@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import "../styles/Dashboard.css";
-import "../styles/Facturacion.css";
+import Sidebar from "../components/Sidebar";
+import * as facturacionService from "../services/facturacion.service";
 import type {
   CobroPendiente,
   EmisorInstitucion,
@@ -8,8 +8,9 @@ import type {
   FacturaPreview,
   ResumenLote,
 } from "../types/factura";
-import * as facturacionService from "../services/facturacion.service";
-import Sidebar from "../components/Sidebar";
+
+import "../styles/Dashboard.css";
+import "../styles/Facturacion.css";
 
 type Props = {
   userRole: "Administrador" | "Auxiliar";
@@ -23,6 +24,8 @@ const emisorInicial: EmisorInstitucion = {
   resolucionDian: "",
 };
 
+const DATOS_POR_PAGINA = 20;
+
 const Facturacion: React.FC<Props> = ({ userRole }) => {
   const token = localStorage.getItem("token");
   const institucionActual = localStorage.getItem("institucion") || "Institución";
@@ -30,30 +33,29 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
   // llamarse parecido, el NIT es la llave real.
   const institucionNit = localStorage.getItem("institucionNit") || "";
 
+  // Estados principales
   const [periodo, setPeriodo] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
-
   const [cobros, setCobros] = useState<CobroPendiente[]>([]);
   const [seleccionados, setSeleccionados] = useState<Set<number>>(new Set());
   const [emisor, setEmisor] = useState<EmisorInstitucion>(emisorInicial);
+  
+  // Estados de carga y búsqueda
   const [buscando, setBuscando] = useState(false);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
+  const [paginaActual, setPaginaActual] = useState(1);
 
-  // Errores reales de conexión con el backend, para poder detectar
-  // problemas de configuración — CORS, URL mal escrita, token vencido.
+  // Errores de conexión
   const [errorEmisor, setErrorEmisor] = useState<string | null>(null);
   const [errorCobros, setErrorCobros] = useState<string | null>(null);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
-  // Vista previa
-  // Modo en que opera la facturación ("simulado" mientras no haya
-  // credenciales de Siigo, "real" cuando las haya). Lo decide el backend.
+  // Estados de vista previa y lote
   const [modoSiigo, setModoSiigo] = useState<string>("simulado");
   const [avisosConfiguracion, setAvisosConfiguracion] = useState<string[]>([]);
   const [resumenLote, setResumenLote] = useState<ResumenLote | null>(null);
-
   const [facturasPreview, setFacturasPreview] = useState<FacturaPreview[]>([]);
   const [indicePreview, setIndicePreview] = useState(0);
   const [mostrarPreview, setMostrarPreview] = useState(false);
@@ -65,8 +67,6 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
   }, []);
 
   // ── EMISOR (datos del colegio activo) ─────────────────────────────
-  // Reutiliza el mismo endpoint que ya usa SeleccionInstitucion.tsx,
-  // así que este fetch es real y no un mock.
   const obtenerEmisor = async () => {
     setErrorEmisor(null);
     try {
@@ -82,7 +82,9 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
   const obtenerCobros = async () => {
     setBuscando(true);
     setSeleccionados(new Set());
+    setPaginaActual(1);
     setErrorCobros(null);
+
     try {
       const data = await facturacionService.obtenerCobros(token, institucionNit, periodo);
       setCobros(data.cobros);
@@ -98,7 +100,7 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     }
   };
 
-  // ── SELECCIÓN DE FILAS ─────────────────────────────────────────────
+  // ── SELECCIÓN DE FILAS Y PAGINACIÓN ───────────────────────────────
   const toggleSeleccion = (id: number) => {
     setSeleccionados((prev) => {
       const next = new Set(prev);
@@ -108,12 +110,24 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     });
   };
 
+  const totalPaginas = Math.ceil(cobros.length / DATOS_POR_PAGINA);
+  const indiceInicio = (paginaActual - 1) * DATOS_POR_PAGINA;
+  const indiceFin = indiceInicio + DATOS_POR_PAGINA;
+  const cobrosPagina = cobros.slice(indiceInicio, indiceFin);
+
   const toggleSeleccionarTodos = () => {
-    if (seleccionados.size === cobros.length) {
-      setSeleccionados(new Set());
-    } else {
-      setSeleccionados(new Set(cobros.map((c) => c.id)));
-    }
+    const idsPagina = cobrosPagina.map((c) => c.id);
+    const todosSeleccionados = idsPagina.every((id) => seleccionados.has(id));
+
+    setSeleccionados((prev) => {
+      const next = new Set(prev);
+      if (todosSeleccionados) {
+        idsPagina.forEach((id) => next.delete(id));
+      } else {
+        idsPagina.forEach((id) => next.add(id));
+      }
+      return next;
+    });
   };
 
   const totalSeleccionado = useMemo(
@@ -121,10 +135,7 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     [cobros, seleccionados]
   );
 
-  // ── CONSTRUCCIÓN DE LA FACTURA (front) ────────────────────────────
-  // Arma la representación de cada factura seleccionada con los datos
-  // que ya tenemos en el front. Cuando el backend esté conectado, este
-  // mismo objeto es el que se le envía para que él la procese con Siigo.
+  // ── CONSTRUCCIÓN DE LA FACTURA ────────────────────────────────────
   const construirFactura = (cobro: CobroPendiente, correlativo: number): FacturaPreview => {
     const hoy = new Date();
     const vencimiento = new Date(hoy);
@@ -132,9 +143,6 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
 
     return {
       cobroId: cobro.id,
-      // TODO backend: el número real y el prefijo lo asigna Siigo según
-      // el rango de resolución DIAN autorizado. Este es solo un placeholder
-      // para poder visualizar la factura antes de conectar.
       numeroFactura: `FE-${String(correlativo).padStart(4, "0")}`,
       fechaGeneracion: hoy.toLocaleDateString("es-CO"),
       fechaVencimiento: vencimiento.toLocaleDateString("es-CO"),
@@ -159,9 +167,7 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
         },
       ],
       subtotal: cobro.valor,
-      // Los servicios de educación formal están excluidos de IVA
-      // (Art. 476 del Estatuto Tributario colombiano).
-      iva: 0,
+      iva: 0, // Servicios de educación formal excluidos de IVA (Art. 476 E.T.)
       total: cobro.valor,
       formaPago: "Contado",
       medioPago: "Transferencia bancaria",
@@ -178,7 +184,6 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     setIndicePreview(0);
     setMostrarPreview(true);
 
-    // Reflejar en la tabla que estas facturas ya están "Generadas"
     setCobros((prev) =>
       prev.map((c) =>
         seleccionados.has(c.id) ? { ...c, estado: "Generada" as EstadoFactura } : c
@@ -186,14 +191,11 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     );
   };
 
-  // ── ENVÍO AL BACKEND (que a su vez habla con Siigo/DIAN) ─────────
+  // ── ENVÍO AL BACKEND (Siigo/DIAN) ──────────────────────────────────
   const enviarFactura = async (factura: FacturaPreview) => {
     setEnviando(true);
     setErrorEnvio(null);
     try {
-      // Se envía el id del cobro y el periodo: el payload que exige Siigo
-      // lo arma el backend, que es quien conoce los ids de comprobante,
-      // vendedor y medio de pago de la cuenta de Solver Control.
       const resultado = await facturacionService.enviarFactura(token, factura.cobroId, periodo);
       actualizarResultadoFactura(factura.cobroId, resultado);
     } catch (error) {
@@ -217,8 +219,6 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
           ? {
               ...f,
               ...resultado,
-              // Si el backend no devolvió número (p. ej. factura
-              // rechazada), se conserva el que ya tenía la vista previa.
               numeroFactura: resultado.numeroFactura ?? f.numeroFactura,
             }
           : f
@@ -231,9 +231,6 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     if (factura) enviarFactura(factura);
   };
 
-  // Emisión en lote: una sola llamada al backend, que envía factura por
-  // factura y NO se detiene cuando Siigo rechaza alguna. Al final llega
-  // el resumen con el detalle de cada una.
   const handleEnviarTodas = async () => {
     const pendientes = facturasPreview.filter((f) => f.estado === "Generada");
     if (pendientes.length === 0) return;
@@ -268,22 +265,16 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
     }
   };
 
-  const cerrarPreview = () => {
-    setMostrarPreview(false);
-  };
+  const cerrarPreview = () => setMostrarPreview(false);
 
+  // ── UTILIDADES DE FORMATO ─────────────────────────────────────────
   const claseEstado = (estado: EstadoFactura) => {
     switch (estado) {
-      case "Aceptada":
-        return "fac-badge fac-badge-ok";
-      case "Rechazada":
-        return "fac-badge fac-badge-error";
-      case "Enviada":
-        return "fac-badge fac-badge-info";
-      case "Generada":
-        return "fac-badge fac-badge-warning";
-      default:
-        return "fac-badge fac-badge-neutral";
+      case "Aceptada": return "fac-badge fac-badge-ok";
+      case "Rechazada": return "fac-badge fac-badge-error";
+      case "Enviada": return "fac-badge fac-badge-info";
+      case "Generada": return "fac-badge fac-badge-warning";
+      default: return "fac-badge fac-badge-neutral";
     }
   };
 
@@ -294,35 +285,16 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
 
   const facturaActual = facturasPreview[indicePreview];
 
+  // ── RENDER ────────────────────────────────────────────────────────
   return (
     <div className="dashboard-layout">
       <Sidebar userRole={userRole} />
 
-      {/* CONTENIDO */}
       <main className="main-content">
         <header className="content-header">
           <h1>Facturación</h1>
           <p>Genera y envía las facturas electrónicas del periodo a Siigo</p>
         </header>
-
-        {modoSiigo === "simulado" && (
-          <p className="fac-aviso-demo">
-            🧪 Facturación en modo simulado — las facturas se validan con las mismas reglas de
-            Siigo pero no se envían a la DIAN. Para emitir de verdad, configurar las credenciales
-            y poner <code>solvia.siigo.modo=real</code> en el backend.
-          </p>
-        )}
-
-        {avisosConfiguracion.length > 0 && (
-          <div className="fac-aviso-error">
-            ⚠️ Falta configurar en el backend antes de facturar en real:
-            <ul>
-              {avisosConfiguracion.map((aviso) => (
-                <li key={aviso}>{aviso}</li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         {resumenLote && (
           <div className="fac-aviso-demo">
@@ -344,12 +316,8 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
           </div>
         )}
 
-        {errorEmisor && (
-          <p className="fac-aviso-error">⚠️ No se pudo cargar la institución: {errorEmisor}</p>
-        )}
-        {errorCobros && (
-          <p className="fac-aviso-error">⚠️ No se pudo cargar los cobros pendientes: {errorCobros}</p>
-        )}
+        {errorEmisor && <p className="fac-aviso-error">⚠️ No se pudo cargar la institución: {errorEmisor}</p>}
+        {errorCobros && <p className="fac-aviso-error">⚠️ No se pudo cargar los cobros pendientes: {errorCobros}</p>}
         {errorEnvio && <p className="fac-aviso-error">⚠️ {errorEnvio}</p>}
 
         {/* BUSCADOR DE COBROS PENDIENTES */}
@@ -384,7 +352,10 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
                       <th>
                         <input
                           type="checkbox"
-                          checked={seleccionados.size === cobros.length && cobros.length > 0}
+                          checked={
+                            cobrosPagina.length > 0 &&
+                            cobrosPagina.every((c) => seleccionados.has(c.id))
+                          }
                           onChange={toggleSeleccionarTodos}
                         />
                       </th>
@@ -397,7 +368,7 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {cobros.map((c) => (
+                    {cobrosPagina.map((c) => (
                       <tr key={c.id}>
                         <td>
                           <input
@@ -427,6 +398,30 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
                   </tbody>
                 </table>
 
+                {totalPaginas > 1 && (
+                  <div className="fac-paginacion">
+                    <button
+                      type="button"
+                      className="fac-btn-paginacion"
+                      onClick={() => setPaginaActual((pagina) => Math.max(1, pagina - 1))}
+                      disabled={paginaActual === 1}
+                    >
+                      ← Anterior
+                    </button>
+                    <span className="fac-pagina-info">
+                      Página {paginaActual} de {totalPaginas}
+                    </span>
+                    <button
+                      type="button"
+                      className="fac-btn-paginacion"
+                      onClick={() => setPaginaActual((pagina) => Math.min(totalPaginas, pagina + 1))}
+                      disabled={paginaActual === totalPaginas}
+                    >
+                      Siguiente →
+                    </button>
+                  </div>
+                )}
+
                 <div className="fac-resumen-seleccion">
                   <span>
                     {seleccionados.size} seleccionado(s) · Total:{" "}
@@ -451,15 +446,11 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
         <div className="fac-modal-overlay" onClick={cerrarPreview}>
           <div className="fac-modal" onClick={(e) => e.stopPropagation()}>
             <div className="fac-modal-header">
-              <span>
-                Factura {indicePreview + 1} de {facturasPreview.length}
-              </span>
-              <button className="fac-modal-close" onClick={cerrarPreview}>
-                ✕
-              </button>
+              <span>Factura {indicePreview + 1} de {facturasPreview.length}</span>
+              <button className="fac-modal-close" onClick={cerrarPreview}>✕</button>
             </div>
 
-            {/* ── DOCUMENTO DE FACTURA ── */}
+            {/* DOCUMENTO DE FACTURA */}
             <div className="factura-doc">
               <div className="factura-doc-header">
                 <div className="factura-doc-emisor">
@@ -470,18 +461,10 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
                 </div>
                 <div className="factura-doc-info">
                   <h3>FACTURA DE VENTA ELECTRÓNICA</h3>
-                  <p>
-                    <strong>N.º:</strong> {facturaActual.numeroFactura}
-                  </p>
-                  <p>
-                    <strong>Fecha generación:</strong> {facturaActual.fechaGeneracion}
-                  </p>
-                  <p>
-                    <strong>Fecha vencimiento:</strong> {facturaActual.fechaVencimiento}
-                  </p>
-                  <p className="factura-doc-resolucion">
-                    Resolución DIAN: {facturaActual.emisor.resolucionDian}
-                  </p>
+                  <p><strong>N.º:</strong> {facturaActual.numeroFactura}</p>
+                  <p><strong>Fecha generación:</strong> {facturaActual.fechaGeneracion}</p>
+                  <p><strong>Fecha vencimiento:</strong> {facturaActual.fechaVencimiento}</p>
+                  <p className="factura-doc-resolucion">Resolución DIAN: {facturaActual.emisor.resolucionDian}</p>
                 </div>
               </div>
 
@@ -544,15 +527,9 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
               <div className="factura-doc-footer">
                 <div className="factura-doc-qr">QR CUFE</div>
                 <div className="factura-doc-footer-info">
-                  <span className={claseEstado(facturaActual.estado)}>
-                    {facturaActual.estado}
-                  </span>
-                  {facturaActual.cufe && (
-                    <p className="factura-doc-cufe">CUFE: {facturaActual.cufe}</p>
-                  )}
-                  {facturaActual.motivoRechazo && (
-                    <p className="factura-doc-motivo">Motivo: {facturaActual.motivoRechazo}</p>
-                  )}
+                  <span className={claseEstado(facturaActual.estado)}>{facturaActual.estado}</span>
+                  {facturaActual.cufe && <p className="factura-doc-cufe">CUFE: {facturaActual.cufe}</p>}
+                  {facturaActual.motivoRechazo && <p className="factura-doc-motivo">Motivo: {facturaActual.motivoRechazo}</p>}
                   <p className="factura-doc-disclaimer">
                     Esta es una representación gráfica generada por el sistema. La factura
                     electrónica válida es la que se transmite en formato XML a la DIAN a
@@ -584,9 +561,7 @@ const Facturacion: React.FC<Props> = ({ userRole }) => {
               </button>
               <button
                 className="fac-btn-nav"
-                onClick={() =>
-                  setIndicePreview((i) => Math.min(facturasPreview.length - 1, i + 1))
-                }
+                onClick={() => setIndicePreview((i) => Math.min(facturasPreview.length - 1, i + 1))}
                 disabled={indicePreview === facturasPreview.length - 1}
               >
                 Siguiente →

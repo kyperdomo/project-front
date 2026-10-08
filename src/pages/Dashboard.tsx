@@ -8,6 +8,14 @@ type Props = {
   userRole: "Administrador" | "Auxiliar";
 };
 
+// Formato corto para el monto sobre cada barra: 14,6 M · 850 mil
+const formatoCorto = (valor: number) =>
+  valor >= 1_000_000
+    ? `${(valor / 1_000_000).toFixed(1).replace(".", ",")} M`
+    : valor >= 1_000
+      ? `${Math.round(valor / 1_000)} mil`
+      : String(Math.round(valor));
+
 const Dashboard: React.FC<Props> = ({ userRole }) => {
   const token = localStorage.getItem("token");
   const institucionNit = localStorage.getItem("institucionNit") || "";
@@ -81,7 +89,7 @@ const Dashboard: React.FC<Props> = ({ userRole }) => {
           </div>
         </section>
 
-        {/* GRÁFICAS */}
+        {/* GRÁFICA: facturación mensual (monto arriba, mes abajo) */}
         <section className="charts-section-container">
           <div className="chart-card-full">
             <h3 className="chart-title">Facturación Mensual</h3>
@@ -90,10 +98,16 @@ const Dashboard: React.FC<Props> = ({ userRole }) => {
                 {serie.map((punto) => (
                   <div
                     key={punto.periodo}
-                    className="bar-column"
-                    style={{ height: `${(punto.total / maximo) * 100}%` }}
+                    className="bar-item"
                     title={`${dashboardService.etiquetaMes(punto.periodo)}: ${dashboardService.formatoCOP(punto.total)}`}
-                  ></div>
+                  >
+                    <span className="bar-value">{formatoCorto(punto.total)}</span>
+                    <div
+                      className="bar-column"
+                      style={{ height: `calc((100% - 48px) * ${(punto.total / maximo).toFixed(4)})` }}
+                    ></div>
+                    <span className="bar-label">{dashboardService.etiquetaMes(punto.periodo)}</span>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -101,16 +115,6 @@ const Dashboard: React.FC<Props> = ({ userRole }) => {
                 {cargando ? "Cargando…" : "Todavía no hay facturas emitidas en los últimos meses."}
               </div>
             )}
-          </div>
-
-          <div className="chart-card-full">
-            <h3 className="chart-title">Pagos por Método</h3>
-            {/* El sistema no registra pagos todavía: no hay forma de saber
-                con qué medio pagó cada acudiente. Se deja el estado vacío
-                explícito en lugar de dibujar una gráfica sin datos. */}
-            <div className="empty-state-container">
-              El sistema aún no registra pagos, solo la emisión de facturas.
-            </div>
           </div>
         </section>
 

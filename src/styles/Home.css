@@ -6,8 +6,8 @@
 }
 
 .home-container {
-  width: 100vw; 
-  min-height: 100vh;
+  width: calc(100vw / var(--z, 1)); 
+  min-height: calc(100vh / var(--z, 1));
   background: #ffffff;
   font-family: "Plus Jakarta Sans", sans-serif;
   margin: 0;
@@ -152,4 +152,50 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ==========================================================================
+   TEMA COLORIDO · solo estilos (verde institucional + naranja de acento)
+   ========================================================================== */
+
+.home-container {
+  background: linear-gradient(160deg, #dff2e7 0%, #ffffff 42%, #fff0d9 100%);
+  isolation: isolate;
+}
+.home-container::before,
+.home-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+.home-container::before {
+  width: 460px; height: 460px; top: -150px; right: -120px;
+  background: radial-gradient(circle, rgba(251, 140, 0, 0.28), transparent 70%);
+}
+.home-container::after {
+  width: 520px; height: 520px; bottom: -170px; left: -150px;
+  background: radial-gradient(circle, rgba(43, 163, 109, 0.28), transparent 70%);
+}
+.home-navbar { background: transparent; }
+.login-btn { background: #1b4332; border-color: #1b4332; color: #ffffff; }
+.login-btn:hover { background: #2a6a4c; }
+.badge { background: #ffe9cc; color: #b45309; }
+.hero p { color: #475569; }
+.secondary-cta {
+  background: linear-gradient(135deg, #fb8c00, #f57c00);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 10px 20px rgba(251, 140, 0, 0.35);
+}
+.secondary-cta:hover { background: linear-gradient(135deg, #f57c00, #e65100); border-color: transparent; }
+.mini-features { flex-wrap: wrap; }
+.feature-item {
+  background: #ffffff;
+  color: #1b4332;
+  padding: 10px 18px;
+  border-radius: 50px;
+  border: 1px solid #cfe5d8;
+  box-shadow: 0 6px 16px rgba(27, 67, 50, 0.10);
 }

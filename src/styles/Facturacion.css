@@ -1,7 +1,8 @@
 /* ==========================================================================
-   FACTURACIÓN — buscador, tabla de cobros y modal de vista previa
+   FACTURACIÓN — Estilos Generales, Tema Colorido y Componentes
    ========================================================================== */
 
+/* Avisos y Alertas */
 .fac-aviso-demo {
   font-size: 13px;
   color: #92400e;
@@ -30,17 +31,22 @@
   margin-bottom: 1.25rem;
 }
 
-/* FILTROS */
+
+/* ==========================================================================
+   1. FILTROS Y BUSCADOR
+   ========================================================================== */
 .fac-filtros {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 14px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0faf4 100%);
+  border: 1px solid #cfe5d8;
+  border-left: 6px solid #fb8c00;
+  box-shadow: 0 8px 20px rgba(27, 67, 50, 0.07);
 }
 
 .fac-filtro-campo {
@@ -53,7 +59,7 @@
 .fac-filtro-campo label {
   font-size: 12px;
   font-weight: 700;
-  color: #94a3b8;
+  color: #2f6f52;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -61,10 +67,10 @@
 .fac-filtro-campo input {
   padding: 9px 12px;
   font-size: 14px;
-  border: 1.5px solid #e2e8f0;
   border-radius: 10px;
   background: #ffffff;
   color: #1e293b;
+  border: 1.5px solid #cfe5d8;
 }
 
 .fac-filtro-campo input:disabled {
@@ -74,38 +80,68 @@
 
 .fac-filtro-campo input:focus {
   outline: none;
-  border-color: #4f46e5;
+  border-color: #1f8a5b;
+  box-shadow: 0 0 0 3px rgba(31, 138, 91, 0.15);
 }
 
-.fac-btn-buscar {
+
+/* ==========================================================================
+   2. BOTONES PRINCIPALES
+   ========================================================================== */
+.fac-btn-buscar,
+.fac-btn-enviar {
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 700;
   border: none;
   border-radius: 10px;
-  background-color: #4f46e5;
   color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  background: linear-gradient(135deg, #2ba36d 0%, #1b7a52 100%);
 }
 
-.fac-btn-buscar:hover:not(:disabled) {
-  background-color: #4338ca;
+.fac-btn-buscar:hover:not(:disabled),
+.fac-btn-enviar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #259461 0%, #176f48 100%);
 }
 
-.fac-btn-buscar:disabled {
-  background-color: #e2e8f0;
+.fac-btn-generar {
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #fb8c00, #f57c00);
+}
+
+.fac-btn-generar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+}
+
+.fac-btn-buscar:disabled,
+.fac-btn-generar:disabled,
+.fac-btn-enviar:disabled {
+  background: #e2e8f0;
   color: #94a3b8;
   cursor: not-allowed;
 }
 
-/* TABLA */
+
+/* ==========================================================================
+   3. TABLA DE COBROS Y RESUMEN
+   ========================================================================== */
 .fac-tabla-container {
   background: #ffffff;
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
   overflow: hidden;
+  border: 1px solid #dcebe2;
+  border-top: 5px solid #1f8a5b;
+  box-shadow: 0 10px 26px rgba(27, 67, 50, 0.09);
 }
 
 .fac-vacio {
@@ -125,12 +161,12 @@
   text-align: left;
   font-size: 12px;
   font-weight: 700;
-  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 14px 20px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
+  background: #eaf6ef;
+  color: #2f6f52;
+  border-bottom: 1px solid #cfe5d8;
 }
 
 .fac-tabla td {
@@ -146,7 +182,7 @@
 }
 
 .fac-tabla tr:hover td {
-  background: #f8fafc;
+  background: #f3fbf6;
 }
 
 .font-bold {
@@ -157,41 +193,64 @@
   text-align: right;
 }
 
-/* RESUMEN DE SELECCIÓN */
 .fac-resumen-seleccion {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
   font-size: 14px;
-  color: #475569;
+  background: #eaf6ef;
+  border-top: 1px solid #cfe5d8;
+  color: #1b4332;
 }
 
-.fac-btn-generar {
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
-  background-color: #15803d;
-  color: #ffffff;
+
+/* ==========================================================================
+   4. PAGINACIÓN
+   ========================================================================== */
+.fac-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.fac-btn-paginacion {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #cfe5d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f8a5b;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.fac-btn-generar:hover:not(:disabled) {
-  background-color: #166534;
+.fac-btn-paginacion:hover:not(:disabled) {
+  background: #eaf6ef;
 }
 
-.fac-btn-generar:disabled {
-  background-color: #e2e8f0;
-  color: #94a3b8;
+.fac-btn-paginacion:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* BADGES DE ESTADO */
+.fac-pagina-info {
+  min-width: 110px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+
+/* ==========================================================================
+   5. BADGES Y NOTIFICACIONES
+   ========================================================================== */
 .fac-badge {
   display: inline-block;
   font-size: 12px;
@@ -238,19 +297,20 @@
   font-family: monospace;
 }
 
-/* ==========================================================================
-   MODAL DE VISTA PREVIA
-   ========================================================================== */
 
+/* ==========================================================================
+   6. MODAL DE VISTA PREVIA
+   ========================================================================== */
 .fac-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   z-index: 100;
   padding: 20px;
+  overflow-y: auto;
+  background: rgba(18, 54, 41, 0.60);
 }
 
 .fac-modal {
@@ -258,7 +318,7 @@
   border-radius: 18px;
   width: 100%;
   max-width: 720px;
-  max-height: 90vh;
+  max-height: calc(90vh / var(--z, 1));
   overflow-y: auto;
   padding: 0 0 20px 0;
 }
@@ -268,13 +328,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
-  border-bottom: 1px solid #e2e8f0;
   font-weight: 700;
-  color: #1e293b;
   position: sticky;
   top: 0;
-  background: #ffffff;
   z-index: 1;
+  background: linear-gradient(90deg, #1b4332, #2a6a4c);
+  color: #ffffff;
+  border-bottom: none;
 }
 
 .fac-modal-close {
@@ -282,35 +342,35 @@
   background: none;
   font-size: 18px;
   cursor: pointer;
-  color: #94a3b8;
+  color: #ffffff;
 }
 
-/* ==========================================================================
-   DOCUMENTO DE FACTURA (vista tipo factura real)
-   ========================================================================== */
 
+/* ==========================================================================
+   7. DOCUMENTO DE FACTURA (Vista Previa Interna)
+   ========================================================================== */
 .factura-doc {
   margin: 20px 24px 0;
-  border: 1.5px solid #e2e8f0;
   border-radius: 14px;
   padding: 24px;
   background: #ffffff;
   font-family: "Segoe UI", Arial, sans-serif;
+  border: 1.5px solid #cfe5d8;
 }
 
 .factura-doc-header {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  border-bottom: 2px solid #1e293b;
   padding-bottom: 14px;
   margin-bottom: 16px;
+  border-bottom: 2px solid #1b4332;
 }
 
 .factura-doc-emisor h2 {
   font-size: 17px;
   margin: 0 0 6px 0;
-  color: #1e293b;
+  color: #1b4332;
 }
 
 .factura-doc-emisor p {
@@ -325,7 +385,7 @@
 
 .factura-doc-info h3 {
   font-size: 13px;
-  color: #4f46e5;
+  color: #1f8a5b;
   margin: 0 0 6px 0;
 }
 
@@ -351,9 +411,9 @@
 }
 
 .factura-doc-parte {
-  background: #f8fafc;
   border-radius: 10px;
   padding: 12px 14px;
+  background: #f0faf4;
 }
 
 .factura-doc-parte h4 {
@@ -382,7 +442,7 @@
   text-transform: uppercase;
   color: #94a3b8;
   padding: 8px 10px;
-  border-bottom: 1.5px solid #e2e8f0;
+  border-bottom: 1.5px solid #cfe5d8;
 }
 
 .factura-doc-items td {
@@ -467,7 +527,10 @@
   margin: 8px 0 0 0;
 }
 
-/* ACCIONES DEL MODAL */
+
+/* ==========================================================================
+   8. ACCIONES DEL MODAL
+   ========================================================================== */
 .fac-modal-acciones {
   display: flex;
   align-items: center;
@@ -492,24 +555,6 @@
   cursor: not-allowed;
 }
 
-.fac-btn-enviar {
-  flex: 1;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
-  background-color: #4f46e5;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.fac-btn-enviar:disabled {
-  background-color: #e2e8f0;
-  color: #64748b;
-  cursor: not-allowed;
-}
-
 .fac-btn-enviar-todas {
   display: block;
   width: calc(100% - 48px);
@@ -517,11 +562,11 @@
   padding: 10px;
   font-size: 13px;
   font-weight: 700;
-  border: 1.5px solid #4f46e5;
   border-radius: 10px;
-  background: #f5f3ff;
-  color: #4f46e5;
   cursor: pointer;
+  border: 1.5px solid #1f8a5b;
+  background: #e6f6ed;
+  color: #1f8a5b;
 }
 
 .fac-btn-enviar-todas:disabled {
