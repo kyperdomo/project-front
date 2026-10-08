@@ -181,3 +181,28 @@
 .login-input { border-color: #cfe5d8; background-color: #f4fbf7; }
 .login-button { background: linear-gradient(135deg, #1b4332 0%, #2a6a4c 100%); }
 .login-button:hover { background: linear-gradient(135deg, #123629 0%, #1b4332 100%); }
+
+/* ==========================================================================
+   LOGIN MÁS GRANDE · tarjeta, textos, campos y botón
+   ========================================================================== */
+.login-box {
+  max-width: 580px;
+  padding: 70px 64px;
+  border-radius: 32px;
+}
+.login-title { font-size: 40px; margin-bottom: 12px; }
+.login-subtitle { font-size: 19px; margin-bottom: 36px; }
+.login-input {
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  font-size: 19px;
+  border-radius: 16px;
+}
+.login-button {
+  padding: 22px;
+  margin-top: 16px;
+  font-size: 20px;
+  border-radius: 16px;
+}
+.login-error { font-size: 17px; padding: 14px 16px; }
+.back-link { font-size: 18px; margin-top: 32px; }
